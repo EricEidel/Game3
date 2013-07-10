@@ -11,6 +11,7 @@ public class Damage
 	//I added some text!
 	// changed text!
 	// Third time a winner!!! :D
+	// KK, need a 4
 	int damage;
 	int type;
 }
