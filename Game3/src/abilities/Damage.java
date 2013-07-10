@@ -10,6 +10,7 @@ public class Damage
 	
 	//I added some text!
 	// changed text!
+	// Third time a winner!!! :D
 	int damage;
 	int type;
 }
