@@ -9,7 +9,7 @@ public class Damage
 	public static final int DEATH = 5;
 	
 	//I added some text!
-	
+	// I add more text!
 	int damage;
 	int type;
 }
