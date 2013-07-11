@@ -1529,26 +1529,39 @@ public class Player extends Creature
 			// if going to cont
 			else if (isOnCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
 			{
-				// if was from world
-				if (source_world_pos != null)
-				{
-					
-				}
-				// if was from inv
-				else if (source_inv != -1)
-				{
-					
-				}
-				// if was from cont
-				else if ((source_cont!=-1)&& (source_item_slot!=-1))
-				{
-					
-				}
+				going_to_cnt(world, ih);
+				// moved, reset all
+				source_world_pos = null;
+				source_inv = -1;
+				source_cont = -1;
+				source_item_slot = -1;
+				actual_held = null;
 			}
 		}
 	}																							
 			
 	
+	private void going_to_cnt(Map world, ItemHandler ih) 
+	{
+		// TODO Auto-generated method stub
+		
+		// if was from world
+		if (source_world_pos != null)
+		{
+			
+		}
+		// if was from inv
+		else if (source_inv != -1)
+		{
+			
+		}
+		// if was from cont
+		else if ((source_cont!=-1)&& (source_item_slot!=-1))
+		{
+			
+		}
+	}
+
 	private void going_to_world(Map world, ItemHandler ih)
 	{
 		Input input = gc.getInput();
@@ -1648,10 +1661,7 @@ public class Player extends Creature
     		
     		actual_held = null;
 		}
-		// TODO swap happens even if item can't be swapped (dest ok but not the otherway)
-		// TODO not going into container but swaps
-		// TODO Didn't get removed from ih?
-		
+
 		// inv to inv
 		else if (source_inv != -1)
 		{
@@ -1675,12 +1685,16 @@ public class Player extends Creature
 	    			if (swap_inv_to_inv.getType() != Item.CONTAINER)
 	    			{
 		    			// check if you can swap?
+
 			    		boolean swap_stop = try_put_inv(swap_inv_to_inv, source_inv);
-			    				
+
 			    		// if you can't, put the item_held back to it's old position.
 			    		// Also, put the swap item back to swap place.
 			    		if (swap_stop)
 			    		{
+				    		remove_from_inv(source_inv);
+				    		remove_from_inv(target_inv);
+				    		
 			    			try_put_inv(actual_held, source_inv);
 			    			try_put_inv(swap_inv_to_inv, target_inv);
 			    		}
@@ -1690,10 +1704,35 @@ public class Player extends Creature
 			
 	    	actual_held = null;
 		}
-		// if was from cont
+		
+		// cont to inv
 		else if ((source_cont!=-1)&& (source_item_slot!=-1))
 		{
+			// get the item at the location we're trying to move actual_held (this will be put in container
+			Item swap_inv_to_cnt = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+			int target_inv = fromInvWhere;
+
+			// try to put the actual held into that inv slot. If it's not possible, stop. If possible, stop = false.
+	    	boolean stop = try_put_inv(actual_held, target_inv);
+	    	
+	    	// if it was possible, check what's up with the other item
+	    	if (!stop)
+	    	{
+	    		// remove actual_held from it's old container
+	    		contH.getContainer(source_cont).remove_from_container(source_item_slot);
+	    		
+	    		// if there was an item to swap
+	    		if (swap_inv_to_cnt != null)
+	    		{
+	    			// swap only if it's not a container
+	    			if (swap_inv_to_cnt.getType() != Item.CONTAINER)
+	    			{
+	    				contH.getContainer(source_cont).add_to_container(swap_inv_to_cnt);
+	    			}
+	    		}
+	    	}
 			
+	    	actual_held = null;			
 		}
 	}
 
