@@ -36,9 +36,11 @@ public class Tile
 	private boolean movable;
 
 	private String see;
+	private boolean canPutItem;
 	
 	public Tile (int type, Position pos)
 	{
+		this.canPutItem = true;
 		this.type = type;
 		this.pos = pos;
 		items = new ArrayList<Item>();
@@ -120,8 +122,14 @@ public class Tile
 		return items.get(items.size()-1);
 	}
 
-	public void setItem(Item item) {
-		items.add(item);
+	public boolean setItem(Item item) 
+	{
+		if (canPutItem)
+		{
+			items.add(item);
+			return true;
+		}
+		return false;
 	}
 
 

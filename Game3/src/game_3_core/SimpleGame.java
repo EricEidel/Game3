@@ -83,6 +83,7 @@ public class SimpleGame extends BasicGame
     	player.check_mouse_click(land);
         player.check_attack_command(land);
         
+        /*
         // Check dragging of items from the world, the inventory or the open containers
         player.check_item_worldToWorld(land);
         player.check_item_InvToWorld(land, ih);
@@ -93,6 +94,10 @@ public class SimpleGame extends BasicGame
         player.check_item_ContToInt();
         player.check_item_ContToCont();
         player.check_item_InvToInv();
+        */
+        
+        // check all GUI item movments
+        player.check_itemMove(land, ih);
         
     	player.update(land, delta);
     	ch.checkDead(land, ih);

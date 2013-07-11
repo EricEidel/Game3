@@ -1445,7 +1445,7 @@ public class Player extends Creature
 	// This draws the dragged item next to the mouse, centered.
 	public void draw_drag_item()
 	{
-		Item dragged = getDragged();
+		Item dragged = actual_held;
 		if (dragged != null)
 		{
 			Input input = gc.getInput();
@@ -1453,31 +1453,376 @@ public class Player extends Creature
 			if (getPos().near(dragged.getPos(), 1))
 				dragged.getPic().draw(input.getAbsoluteMouseX()-25, input.getAbsoluteMouseY()-25);
 		}
+	}	
+
+	private Item actual_held = null;		
+	Position source_world_pos = null;
+	int source_inv = -1;
+	int source_cont = -1;
+	int source_item_slot = -1;
+	
+	public void check_itemMove(Map world, ItemHandler ih)
+	{
+		Input input = gc.getInput();
+		boolean mouseDown = input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON);
+		boolean ctrlDown = input.isKeyDown(Input.KEY_LCONTROL) || input.isKeyDown(Input.KEY_RCONTROL);
+		// when mouse down, get the item from one of two places - inv or cont.
+		// when mouse down + ctrl, try get item from world.
+	
+
+		
+		// Get the actual_held and remember where you got it.
+		if ((actual_held == null)&&(mouseDown))
+		{
+			// for the world item ctrl has to be down
+			if (isOnWorld(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()) && ctrlDown)
+			{
+				actual_held = getItemFromWorld(input.getAbsoluteMouseX(), input.getAbsoluteMouseY(), world);
+				if (actual_held != null)
+					source_world_pos = actual_held.getPos();
+			}
+			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				actual_held = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				if (actual_held != null)
+					source_inv = fromInvWhere;	
+			}
+			else if (isOnCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				actual_held = getItemFromCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				if (actual_held != null)
+				{
+					source_cont = cont_num;
+					source_item_slot = item_slot;
+				}
+			}
+		}
+		
+		// when mouse off and item actual_held is not null, check to see where. Try move item there.
+		if ((actual_held != null)&&(!mouseDown))
+		{
+			// if going to world
+			if (isOnWorld(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				going_to_world(world, ih);
+				
+				// moved, reset all
+				source_world_pos = null;
+				source_inv = -1;
+				source_cont = -1;
+				source_item_slot = -1;
+				actual_held = null;
+			}
+			
+			// if going to inv
+			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				going_to_inv(world,ih);
+				
+				// moved, reset all
+				source_world_pos = null;
+				source_inv = -1;
+				source_cont = -1;
+				source_item_slot = -1;
+				actual_held = null;
+			}
+			// if going to cont
+			else if (isOnCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				// if was from world
+				if (source_world_pos != null)
+				{
+					
+				}
+				// if was from inv
+				else if (source_inv != -1)
+				{
+					
+				}
+				// if was from cont
+				else if ((source_cont!=-1)&& (source_item_slot!=-1))
+				{
+					
+				}
+			}
+		}
+	}																							
+			
+	
+	private void going_to_world(Map world, ItemHandler ih)
+	{
+		Input input = gc.getInput();
+		
+		// world to world
+		if (source_world_pos != null)
+		{
+			Position pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+    		
+			// set the item at the new position and remove it from the old position in the world
+    		boolean check = world.tileAt(pos).setItem(actual_held);
+    		if (check)
+    		{
+    			world.tileAt(actual_held.getPos()).removeItem(actual_held);
+    			
+    			// update item position
+    			actual_held.setPos(pos);
+    			actual_held = null;
+    		}
+		}
+		
+		// inv to world
+		else if (source_inv != -1)
+		{
+			// get target position
+			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+			
+			// try to add item to world
+    		boolean check = world.tileAt(target_pos).setItem(actual_held);
+    		
+    		// if successful, update item location and ih and remove from inv.
+    		if (check)
+    		{
+	    		ih.add_item(actual_held);
+	    		actual_held.setPos(target_pos);
+	    		remove_from_inv(source_inv);
+    		}
+
+    		actual_held = null;
+		}
+
+		// if was from cont
+		else if ((source_cont!=-1)&& (source_item_slot!=-1))
+		{
+			// put item to the world
+			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+    		world.tileAt(target_pos).setItem(actual_held);
+    		ih.add_item(actual_held);
+    		actual_held.setPos(target_pos);
+    		
+    		// remove it from the container
+    		contH.removeItem(cont_num, item_slot);
+    		
+    		actual_held = null;
+		}
+	}
+	
+	private void going_to_inv(Map world, ItemHandler ih)
+	{
+		Input input = gc.getInput();
+		
+		// world to inv
+		if (source_world_pos != null)
+		{
+			// get item that was in inv and the target_inv_slot
+			Item swap_to_world = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+			int target_inv_slot = fromInvWhere;
+			
+    		boolean stop = try_put_inv(actual_held, target_inv_slot);
+
+    		// if the target item is a container, don't swap it.
+    		if (swap_to_world != null)
+				if (swap_to_world.getType() == Item.CONTAINER)
+				{
+					swap_to_world = null;
+				}	    
+			
+    		if (!stop)
+    		{
+	    		// update item to be on player position	
+    			actual_held.setPos(getPos());
+    								
+				// remove the old item
+    			ih.remove_item(actual_held);
+				world.tileAt(source_world_pos).removeItem(actual_held);
+				
+    			// if need to swap items
+	    		if (swap_to_world!= null)
+	    		{
+	    			swap_to_world.setPos(source_world_pos);
+	    			ih.add_item(swap_to_world);
+	    			world.tileAt(source_world_pos).setItem(swap_to_world);
+	    		}
+				
+				
+    		}
+    		
+    		actual_held = null;
+		}
+		// TODO swap happens even if item can't be swapped (dest ok but not the otherway)
+		// TODO not going into container but swaps
+		// TODO Didn't get removed from ih?
+		
+		// inv to inv
+		else if (source_inv != -1)
+		{
+			// get the item at the location we're trying to move actual_held
+			Item swap_inv_to_inv = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+			int target_inv = fromInvWhere;
+
+			// try to put the actual held into that inv slot. If it's not possible, stop. If possible, stop = false.
+	    	boolean stop = try_put_inv(actual_held, target_inv);
+	    	
+	    	// if it was possible, check what's up with the other item
+	    	if (!stop)
+	    	{
+	    		// remove actual_held from it's old position
+	    		remove_from_inv(source_inv);
+	    		
+	    		// if there was an item to swap
+	    		if (swap_inv_to_inv != null)
+	    		{
+	    			// swap only if it's not a container
+	    			if (swap_inv_to_inv.getType() != Item.CONTAINER)
+	    			{
+		    			// check if you can swap?
+			    		boolean swap_stop = try_put_inv(swap_inv_to_inv, source_inv);
+			    				
+			    		// if you can't, put the item_held back to it's old position.
+			    		// Also, put the swap item back to swap place.
+			    		if (swap_stop)
+			    		{
+			    			try_put_inv(actual_held, source_inv);
+			    			try_put_inv(swap_inv_to_inv, target_inv);
+			    		}
+	    			}
+	    		}
+	    	}
+			
+	    	actual_held = null;
+		}
+		// if was from cont
+		else if ((source_cont!=-1)&& (source_item_slot!=-1))
+		{
+			
+		}
 	}
 
-	// This returns the item that is being dragged by on of the 'check_item' methods.
-	
-	private Item getDragged() 
+	private void remove_from_inv(int source_inv2) 
 	{
-		if (held != null)
-			return held;
-		else if (held_from_cnt_to_cnt != null) 
-			return held_from_cnt_to_cnt;
-		else if (held_from_cnt_to_inv != null) 
-			return held_from_cnt_to_inv;
-		else if (held_from_cont != null)
-			return held_from_cont;
-		else if (held_from_inv != null )
-			return held_from_inv;
-		else if (held_from_inv_to_cont != null)
-			return held_from_inv_to_cont;
-		else if (held_from_world_to_cont != null )
-			return held_from_world_to_cont;
-		else if (held_from_world_to_inv != null )
-			return held_from_world_to_inv;
-		else if (held_from_inv_to_inv != null )
-			return held_from_inv_to_inv;
+		switch (source_inv2)
+		{
+		case 1:
+			getInv().setNeck(null);
+			break;
+		case 2:
+			getInv().setHelmet(null);
+			break;
+		case 3:
+			getInv().setContainer(null);
+			break;
+		case 4:
+			getInv().setWeapon(null);
+			break;
+		case 5:
+			getInv().setChest(null);
+			break;
+		case 6:
+			getInv().setOff_hand(null);
+			break;
+		case 7:
+			getInv().setRing(null);
+			break;
+		case 8:
+			getInv().setPants(null);
+			break;
+		case 9:
+			getInv().setMisc(null);
+			break;
+		case 10:
+			getInv().setBoots(null);
+			break;
+		}
+	}
+
+	// This method tries to put equip the item or put it into the container/misc container. 
+	// It will return false if it failed to do so or true if the item "moved" successfully.
+	private boolean try_put_inv(Item actual_held, int goingToInv)
+	{
+		boolean stop = false;
 		
-		return null;
+		switch (goingToInv)
+		{
+		case -1:
+			stop = true;
+			break;
+		case 1:
+			if (actual_held.getType() == Item.NECK)
+				getInv().setNeck(actual_held);
+			else
+				stop = true;
+			break;
+		case 2:
+			if (actual_held.getType() == Item.HELM)
+				getInv().setHelmet(actual_held);
+			else
+				stop = true;
+			break;
+		case 3:
+			// if there's no container, equip one.
+			// if there is, try and put the item in the container
+			if (getInv().getContainer() == null)
+			{
+				if (actual_held.getType() == Item.CONTAINER)
+					getInv().setContainer((Container)actual_held);
+				else
+					stop = true;
+			}
+			else
+			{
+				stop = ! getInv().getContainer().add_to_container(actual_held);
+			}
+			break;
+		case 4:
+			if (actual_held.getType() == Item.WEAPON)
+				getInv().setWeapon(actual_held);
+			else
+				stop = true;
+			break;
+		case 5:
+			if (actual_held.getType() == Item.CHEST)
+				getInv().setChest(actual_held);
+			else
+				stop = true;
+			break;
+		case 6:
+			if (actual_held.getType() == Item.OFF_HAND)
+				getInv().setOff_hand(actual_held);
+			else
+				stop = true;
+			break;
+		case 7:
+			if (actual_held.getType() == Item.RING)
+				getInv().setRing(actual_held);
+			else
+				stop = true;
+			break;
+		case 8:
+			if (actual_held.getType() == Item.PANTS)
+				getInv().setPants(actual_held);
+			else
+				stop = true;
+			break;
+		case 9:
+			// if misc is empty, put the new item there
+			// else if not a container, put new item
+			// if it is a container, try put the item in
+			if (getInv().getMisc() == null)
+				getInv().setMisc(actual_held);
+				
+			else if (getInv().getMisc().getType() != Item.CONTAINER)
+				getInv().setMisc(actual_held);
+			
+			else
+				stop = ! ((Container)getInv().getMisc()).add_to_container(actual_held);
+			break;
+		case 10:
+			if (actual_held.getType() == Item.BOOTS)
+				getInv().setBoots(actual_held);
+			else
+				stop = true;
+			break;
+		}
+		
+		return stop;
 	}
 }
