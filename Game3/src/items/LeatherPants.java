@@ -1,8 +1,10 @@
 package items;
 
+import game_3_core.Position;
+
 import org.newdawn.slick.Image;
 
-import game_3_core.Position;
+import creatures.Player;
 
 public class LeatherPants extends Item
 {
@@ -26,7 +28,7 @@ public class LeatherPants extends Item
 	}
 
 	@Override
-	public void use() 
+	public void use(Player player) 
 	{
 		// TODO Auto-generated method stub
 		

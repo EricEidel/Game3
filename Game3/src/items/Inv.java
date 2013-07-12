@@ -39,7 +39,7 @@ public class Inv
 		pants = new LeatherPants(SimpleGame.start_player_pos);
 		boots = new Dead_wolf(SimpleGame.start_player_pos);
 		ring = new Sword(SimpleGame.start_player_pos);
-		misc = new ShortSword(SimpleGame.start_player_pos);
+		misc = new GoldCoin(SimpleGame.start_player_pos, 4);
 		
 		weapon_type = MELEE;
 		

@@ -2,8 +2,9 @@ package items;
 
 import game_3_core.Position;
 
-import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
+
+import creatures.Player;
 
 public class Sword extends Item 
 {
@@ -26,9 +27,9 @@ public class Sword extends Item
 	}
 
 	@Override
-	public void use() 
+	public void use(Player player) 
 	{
-		// TODO Auto-generated method stub
+		// Can't use sword
 		
 	}
 }

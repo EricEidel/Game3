@@ -4,6 +4,8 @@ import game_3_core.Position;
 
 import org.newdawn.slick.Image;
 
+import creatures.Player;
+
 public class ShortSword extends Item 
 {
 	public ShortSword(Position pos)
@@ -25,7 +27,7 @@ public class ShortSword extends Item
 	}
 
 	@Override
-	public void use() 
+	public void use(Player player) 
 	{
 		// TODO Auto-generated method stub
 		

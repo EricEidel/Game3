@@ -3,12 +3,12 @@ package items;
 import game_3_core.Position;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import org.newdawn.slick.Image;
 
 import GUI.HUD;
 import GUI.Map;
+import creatures.Player;
 
 public class Container extends UniqueItem
 {
@@ -95,26 +95,6 @@ public class Container extends UniqueItem
 		}
 		return false;
 	}
-	
-	private boolean contIDContains(ArrayList<Long> parents_id_this, long id_item_cont, ArrayList<Long> parents_id_item_cont) 
-	{
-		if (parents_id_this.contains(id_item_cont))
-			return false;
-		
-		else
-		{
-			for (Long id: parents_id_this)
-			{
-				for (Long item_cond_parents_id: parents_id_item_cont)
-				{
-					if (id == item_cond_parents_id)
-						return false;
-				}
-			}
-		}
-		
-		return true;
-	}
 
 	public void remove_from_container(int index)
 	{		
@@ -131,13 +111,16 @@ public class Container extends UniqueItem
 	
 	
 	@Override
-	public void use() 
+	public void use(Player player) 
 	{
 		//System.out.println("Container used! Open set to " + !isOpen());
 		if (isOpen())
 			close();
 		else
+		{
 			open();
+			player.contH.add(this);
+		}
 
 	}
 	

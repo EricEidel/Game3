@@ -2,7 +2,6 @@ package game_3_core;
 //package slick.path2glory.SimpleGame;
   
 import items.Item;
-import items.Sword;
 
 import java.util.Random;
 
@@ -11,7 +10,6 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import GUI.Map;
@@ -47,7 +45,7 @@ public class SimpleGame extends BasicGame
     public void init(GameContainer gc) throws SlickException 
     {
     	
-    	 this.gc = gc;
+    	 SimpleGame.gc = gc;
     	 gc.setTargetFrameRate(60); 
     	 gc.getInput().enableKeyRepeat();
     	 
@@ -83,21 +81,9 @@ public class SimpleGame extends BasicGame
     	player.check_mouse_click(land);
         player.check_attack_command(land);
         
-        /*
-        // Check dragging of items from the world, the inventory or the open containers
-        player.check_item_worldToWorld(land);
-        player.check_item_InvToWorld(land, ih);
-        player.check_item_WorldToInv(land, ih);
-        player.check_item_ContToWorld(land, ih);
-        player.check_item_WorldToCont(land, ih);
-        player.check_item_InvToCont();
-        player.check_item_ContToInt();
-        player.check_item_ContToCont();
-        player.check_item_InvToInv();
-        */
-        
-        // check all GUI item movments
+        // check all GUI item movements and use
         player.check_itemMove(land, ih);
+        player.check_item_use(delta);
         
     	player.update(land, delta);
     	ch.checkDead(land, ih);

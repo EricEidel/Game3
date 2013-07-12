@@ -279,26 +279,21 @@ public class Player extends Creature
 		    			{
 			    			if (target.near(getPos(),1))
 			    			{
-				    			temp.use();
-				    			if (temp.getType() == Item.CONTAINER)
-				    			{
-				    				Container cont = (Container) temp;
-				    				contH.add(cont);
-				    			}
+				    			temp.use(this);
 			    			}
-				    			else
-				    			{
-				        			TileGraph graph = land.getGraph(getPos(), target);
-				        			try
-				        			{
-				        				setPath(graph.findShortestPath().removeLast());
-				        			}
-				        			catch (NullPointerException e)
-				        			{
-				        				setPath(null);
-				        			}
-				        			tryUse = temp;
-				    			}
+			    			else
+			    			{
+			        			TileGraph graph = land.getGraph(getPos(), target);
+			        			try
+			        			{
+			        				setPath(graph.findShortestPath().removeLast());
+			        			}
+			        			catch (NullPointerException e)
+			        			{
+			        				setPath(null);
+			        			}
+			        			tryUse = temp;
+			    			}
 			    		}
 		    		}
 		    	}
@@ -364,9 +359,8 @@ public class Player extends Creature
 		if (tryUse!=null && tryUse.getPos().near(getPos(), 1))
 		{
 	
-			tryUse.use();
-			if (tryUse instanceof Container)
-				contH.add((Container)tryUse);
+			tryUse.use(this);
+
 			tryUse = null;
 		}
   
@@ -1055,5 +1049,35 @@ public class Player extends Creature
 		}
 		
 		return stop;
+	}
+	
+	private int deltaUse = 0;
+	public final int USE_FREQUENCY = 200;
+	public void check_item_use(int delta)
+	{
+		deltaUse +=delta;
+		
+		if (deltaUse > USE_FREQUENCY)
+		{
+			Input input = gc.getInput();
+			boolean mouseRightClick = input.isMouseButtonDown(Input.MOUSE_RIGHT_BUTTON);
+			
+			if (isOnCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()) && mouseRightClick)
+			{
+				getItemFromCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				int temp_cont_num = cont_num;
+				int temp_item_num = item_slot;
+				Item temp = contH.getContainer(temp_cont_num).get_item(temp_item_num);
+				if (temp!= null)
+					temp.use(this);
+			}
+			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()) && mouseRightClick)
+			{
+				Item temp = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				if (temp!= null)
+					temp.use(this);
+			}
+			deltaUse = 0;
+		}
 	}
 }

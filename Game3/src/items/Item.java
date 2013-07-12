@@ -24,7 +24,8 @@ public abstract class Item
 	public static final int NECK = 10;
 	
 	public static final int FOOD = 11;
-	public static final int POTION= 4;
+	public static final int POTION= 12;
+	public static final int COIN = 13;
 	
 	public static final int OTHER = -1;
 	
@@ -171,7 +172,7 @@ public abstract class Item
 		this.name = name;
 	}
 
-	public abstract void use();
+	public abstract void use(Player player);
 
 	public boolean isUsable() 
 	{
