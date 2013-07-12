@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/86/trunk/sui/src/mdes/slick/sui/layout
+END
+RowLayout.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/79/trunk/sui/src/mdes/slick/sui/layout/RowLayout.java
+END
+StaticLayout.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/layout/StaticLayout.java
+END
+LayoutManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/layout/LayoutManager.java
+END
+LayoutUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/layout/LayoutUtil.java
+END
+Layout.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/86/trunk/sui/src/mdes/slick/sui/layout/Layout.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/59/trunk/sui/src/mdes/slick/sui/layout/package.html
+END

@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/85/trunk/sui/src/mdes/slick/sui/skin
+END
+ComponentAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/ComponentAppearance.java
+END
+SliderAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/SliderAppearance.java
+END
+SkinUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/SkinUtil.java
+END
+ScrollPaneAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/ScrollPaneAppearance.java
+END
+ScrollBarAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/ScrollBarAppearance.java
+END
+ColorUIResource.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/15/trunk/sui/src/mdes/slick/sui/skin/ColorUIResource.java
+END
+UIResource.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/15/trunk/sui/src/mdes/slick/sui/skin/UIResource.java
+END
+AbstractComponentAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/AbstractComponentAppearance.java
+END
+TextComponentAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/TextComponentAppearance.java
+END
+ImageUIResource.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/25/trunk/sui/src/mdes/slick/sui/skin/ImageUIResource.java
+END
+FrameAppearance.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/!svn/ver/73/trunk/sui/src/mdes/slick/sui/skin/FrameAppearance.java
+END
+FontUIResource.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/15/trunk/sui/src/mdes/slick/sui/skin/FontUIResource.java
+END
+package.html
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/59/trunk/sui/src/mdes/slick/sui/skin/package.html
+END

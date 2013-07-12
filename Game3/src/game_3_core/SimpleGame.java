@@ -10,14 +10,18 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import sui.Display;
 import GUI.Map;
+import GUI.MyChat;
 import creatures.Player;
 import creatures.Wolf;
   
 public class SimpleGame extends BasicGame
 {
+    static private Display display;
 	public static boolean debug = true;
 	// input control
 	public static Position start_player_pos = new Position(Player.X_PLAYER_START, Player.Y_PLAYER_START);
@@ -31,11 +35,11 @@ public class SimpleGame extends BasicGame
 	
 	static public GameContainer gc;
 	public static Random rand = new Random();
+	public MyChat chat;
 	
 	Wolf wolf;
 	Item sword;
-	
-	
+	 
     public SimpleGame()
     {
         super("OMG new game!!1");
@@ -44,7 +48,7 @@ public class SimpleGame extends BasicGame
     @Override
     public void init(GameContainer gc) throws SlickException 
     {
-    	
+    	 display = new Display(gc);
     	 SimpleGame.gc = gc;
     	 gc.setTargetFrameRate(60); 
     	 gc.getInput().enableKeyRepeat();
@@ -66,7 +70,14 @@ public class SimpleGame extends BasicGame
     	
     	 //Position pos_item = new Position(15,10);
     	 //sword = new Sword(pos_item);
-    	 //ih.add_item(sword);
+    	 //ih.add_item(sword); 
+    	 chat = new MyChat();
+
+    	
+    	 
+    
+         
+    	 
     }
     
     @Override
@@ -87,6 +98,11 @@ public class SimpleGame extends BasicGame
         
     	player.update(land, delta);
     	ch.checkDead(land, ih);
+    	
+    	if (gc.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+    		chat.update();
+    	
+    	display.update(gc, delta);
     }
     
   
@@ -111,12 +127,12 @@ public class SimpleGame extends BasicGame
    	 	
    	 	player.contH.draw();
    	 	player.draw_drag_item();
+   	 	
+   	 	//chat.render(g, gc);
+   	 	display.render(gc, g);
     }
   
-    static public GameContainer getGC()
-    {
-    	return gc;
-    }
+
     
 
     public static void main(String[] args) throws SlickException
@@ -126,4 +142,17 @@ public class SimpleGame extends BasicGame
          app.setDisplayMode(1100, 800, false);
          app.start();
     }
+    
+    static public GameContainer getGC()
+    {
+    	return gc;
+    }
+    
+	public static Display getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Display display) {
+		SimpleGame.display = display;
+	}
 }

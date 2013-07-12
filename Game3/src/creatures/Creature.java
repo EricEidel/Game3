@@ -18,7 +18,7 @@ import GUI.Status;
 import abilities.Spell;
 
 
-
+// TODO when creature is on the same spot, need to cancel animation with setMov(no_mov);
 public abstract class Creature 
 {
 	static Color RED = new Color(255, 0, 0);
