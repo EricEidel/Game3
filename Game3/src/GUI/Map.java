@@ -297,7 +297,7 @@ public class Map
 		Item temp = c.getDeadItem();
 		if (temp != null)
 		{
-			land[pos.getY()][pos.getX()].setItem(temp);
+			land[pos.getY()][pos.getX()].setItem(temp, ih);
 			ih.add_item(temp);
 		}
 	}

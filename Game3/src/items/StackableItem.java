@@ -19,4 +19,6 @@ public abstract class StackableItem extends Item
 
 	public abstract void setAmount(int amount);
 	public abstract int getAmount();
+
+	public abstract boolean stack(Item item);
 }

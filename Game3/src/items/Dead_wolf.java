@@ -1,6 +1,7 @@
 package items;
 
 import game_3_core.Position;
+import game_3_core.SimpleGame;
 
 import org.newdawn.slick.Image;
 
@@ -30,6 +31,7 @@ public class Dead_wolf extends Container
 		add_to_container(new Sword(null));
 		add_to_container(new Sword(null));
 		add_to_container(new Sword(null));
+		add_to_container(new GoldCoin(SimpleGame.start_player_pos, 4));
 		
 	}
 

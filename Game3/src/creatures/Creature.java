@@ -123,16 +123,16 @@ public abstract class Creature
 			switch (des)
 			{
 				case 1:
-					goDown(world);
+					moveTo(new Position(getPos().getX()-1, getPos().getY()), world);
 					break;
 				case 2:
-					goUp(world);
+					moveTo(new Position(getPos().getX()+1, getPos().getY()), world);
 					break;
 				case 3:
-					goLeft(world);
+					moveTo(new Position(getPos().getX(), getPos().getY()-1), world);
 					break;
 				case 4:
-					goRight(world);
+					moveTo(new Position(getPos().getX(), getPos().getY()+1), world);
 					break;
 				case 5:
 					break;
@@ -175,78 +175,7 @@ public abstract class Creature
 	
 	// MOVEMENT
 	
-	public void goLeft(Map world) 
-	{
-		moveTo(new Position(getPos().getX()-1, getPos().getY()), world);
-		/*
-		if (world.isMovable(getPos().getX()-1, getPos().getY()))
-			{
-				//System.out.println(world.tileAt(new Position(getPos().getX()-1, getPos().getY())).getPos());
-				setOldPos(new Position(getPos()));
-				
-				if (!(getOldPos().equals(getPos())))
-					setMoving(Creature.left);
-				
-				getPos().setX(getPos().getX()-1);
-				tile.setC(null);
-				tile = world.tileAt(getPos());
-				tile.setC(this);
-			}*/
-	}
-	
-	public void goRight(Map world) 
-	{
-		if (world.isMovable(getPos().getX()+1, getPos().getY() ))
-			{
-				//System.out.println(world.tileAt(new Position(getPos().getX()+1, getPos().getY())).getPos());
-				setOldPos(new Position(getPos()));
-				
-				if (!(getOldPos().equals(getPos())))
-					setMoving(Creature.right);
-				
-				getPos().setX(getPos().getX()+1);
-				tile.setC(null);
-				tile = world.tileAt(getPos());
-				tile.setC(this);
-			}
-	}
-	
-	public void goDown(Map world) 
-	{
-		if (world.isMovable(getPos().getX(), getPos().getY()+1))
-			{
-				//System.out.println(world.tileAt(new Position(getPos().getX(), getPos().getY()+1)).getPos());
-				setOldPos(new Position(getPos()));
-				
-				if (!(getOldPos().equals(getPos())))
-					setMoving(Creature.down);
-				
-				getPos().setY(getPos().getY()+1);
-				tile.setC(null);
-				tile = world.tileAt(getPos());
-				tile.setC(this);
-			}
-	}
 
-	public void goUp(Map world) 
-	{
-		if (getPos().getY()-1 >= 0)
-			if (world.isMovable(getPos().getX(), getPos().getY()-1))
-			{
-				
-				//System.out.println(world.tileAt(new Position(getPos().getX(), getPos().getY()-1)).getPos());
-				setOldPos(new Position(getPos()));
-				
-				if (!(getOldPos().equals(getPos())))
-					setMoving(Creature.up);
-				
-				getPos().setY(getPos().getY()-1);
-				tile.setC(null);
-				tile = world.tileAt(getPos());
-				tile.setC(this);
-			}
-	}
-	
 	public void moveTo(Position target, Map world)
 	{			
 		int diff = getPos().find_diff(target);

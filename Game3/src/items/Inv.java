@@ -39,7 +39,7 @@ public class Inv
 		pants = new LeatherPants(SimpleGame.start_player_pos);
 		boots = new Dead_wolf(SimpleGame.start_player_pos);
 		ring = new Sword(SimpleGame.start_player_pos);
-		misc = new GoldCoin(SimpleGame.start_player_pos, 4);
+		misc = new GoldCoin(SimpleGame.start_player_pos, 1);
 		
 		weapon_type = MELEE;
 		
@@ -141,8 +141,12 @@ public class Inv
 		return misc;
 	}
 
-	public void setMisc(Item misc) {
+	public void setMisc(Item misc) 
+	{
+		
+		
 		this.misc = misc;
+		
 	}
 	
 	public Container getContainer() 

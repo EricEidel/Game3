@@ -7,6 +7,7 @@ import graphUtil.TileGraph;
 import items.Container;
 import items.Inv;
 import items.Item;
+import items.StackableItem;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.GameContainer;
@@ -161,7 +162,7 @@ public class Player extends Creature
 		if(input.isKeyPressed(Input.KEY_A)||input.isKeyDown(Input.KEY_A))
 		{
 			setOldPos(getPos());
-			goLeft(land);
+			moveTo(new Position(getPos().getX()-1, getPos().getY()), land);
 			manual_move = true;
 			setPath(null);
 		}
@@ -169,7 +170,7 @@ public class Player extends Creature
 		else if(input.isKeyPressed(Input.KEY_D)||input.isKeyDown(Input.KEY_D))
 		{
 			setOldPos(getPos());
-			goRight(land);
+			moveTo(new Position(getPos().getX()+1, getPos().getY()), land);
 			manual_move = true;
 			setPath(null);
 		}
@@ -177,7 +178,7 @@ public class Player extends Creature
 		else if(input.isKeyPressed(Input.KEY_W)||input.isKeyDown(Input.KEY_W))
 		{
 			setOldPos(getPos());
-			goUp(land);
+			moveTo(new Position(getPos().getX(), getPos().getY()-1), land);
 			manual_move = true;
 			setPath(null);
 		}
@@ -185,7 +186,7 @@ public class Player extends Creature
 		else if(input.isKeyPressed(Input.KEY_S)||input.isKeyDown(Input.KEY_S))
 	    {
 	    	setOldPos(getPos());
-	    	goDown(land);
+	    	moveTo(new Position(getPos().getX(), getPos().getY()+1), land);
 	    	manual_move = true;
 			setPath(null);
 	    }
@@ -354,6 +355,7 @@ public class Player extends Creature
     	{
     		setMoving(no_move);
     	}
+
     	
 
 		if (tryUse!=null && tryUse.getPos().near(getPos(), 1))
@@ -670,6 +672,15 @@ public class Player extends Creature
 				source_item_slot = -1;
 				actual_held = null;
 			}
+			else
+			{
+				// reset all
+				source_world_pos = null;
+				source_inv = -1;
+				source_cont = -1;
+				source_item_slot = -1;
+				actual_held = null;
+			}
 		}
 	}																							
 			
@@ -680,6 +691,7 @@ public class Player extends Creature
 		
 		getItemFromCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
 		int target_cont_num = cont_num;
+		int target_item_slot = item_slot;
 		
 		Container target_cont = contH.getContainer(target_cont_num);
 		
@@ -692,7 +704,22 @@ public class Player extends Creature
 				// if the target container is not null and is not full
 				if (target_cont !=null )
 				{
-					if (!target_cont.isFull())
+					
+					boolean isStacked = false;
+					Item targetItemCont = contH.getContainer(target_cont_num).get_item(target_item_slot);
+					if (targetItemCont instanceof StackableItem)
+					{
+						// try to stack
+						isStacked = ((StackableItem)targetItemCont).stack(actual_held);
+						if (isStacked)
+						{
+							// if stacked, remove from world
+							world.tileAt(source_world_pos).removeItem(actual_held);
+							ih.remove_item(actual_held);
+						}
+					}
+					
+					if (!target_cont.isFull() && !isStacked)
 					{
 						// try to add
 						boolean check = target_cont.add_to_container(actual_held);
@@ -708,13 +735,28 @@ public class Player extends Creature
 			
 			actual_held = null;
 		}
+		// TODO cont to inv is messed up - will create 100 gold coins when moving 4 from cont to 1 in misc.
+		
 		// inv to cont
 		else if (source_inv != -1)
 		{
 			// if the target container is not null and is not full
 			if (target_cont !=null )
 			{
-				if (!target_cont.isFull())
+				boolean isStacked = false;
+				Item targetItemCont = contH.getContainer(target_cont_num).get_item(target_item_slot);
+				if (targetItemCont instanceof StackableItem)
+				{
+					// try to stack
+					isStacked = ((StackableItem)targetItemCont).stack(actual_held);
+					if (isStacked)
+					{
+						// if stacked, remove from inv
+						remove_from_inv(source_inv);
+					}
+				}
+				
+				if (!target_cont.isFull() && !isStacked)
 				{
 					// try to add
 					boolean check = target_cont.add_to_container(actual_held);
@@ -725,26 +767,44 @@ public class Player extends Creature
 					}						
 				}
 			}
+			actual_held = null;
 		}
-		// if was from cont
+		// cont to cont
 		else if ((source_cont!=-1)&& (source_item_slot!=-1))
 		{
 			if (target_cont !=null )
 			{
-				if (!target_cont.isFull())
+				if (!((target_item_slot == source_item_slot)&&(target_cont_num == source_cont)))
 				{
-					// try to add
-					boolean check = target_cont.add_to_container(actual_held);
-					if (check)
+					boolean isStacked = false;
+					Item targetItemCont = contH.getContainer(target_cont_num).get_item(target_item_slot);
+					if (targetItemCont instanceof StackableItem)
 					{
-						// if added, remove from inv
-						Container from_cont = contH.getContainer(source_cont);
-						from_cont.remove_from_container(source_item_slot);
-					}						
+						// try to stack
+						isStacked = ((StackableItem)targetItemCont).stack(actual_held);
+						if (isStacked)
+						{
+							// if stacked, remove from cont
+							Container from_cont = contH.getContainer(source_cont);
+							from_cont.remove_from_container(source_item_slot);
+						}
+					}
+					
+					if (!target_cont.isFull() && !isStacked)
+					{
+						// try to add
+						boolean check = target_cont.add_to_container(actual_held);
+						if (check)
+						{
+							// if added, remove from cont
+							Container from_cont = contH.getContainer(source_cont);
+							from_cont.remove_from_container(source_item_slot);
+						}						
+					}
 				}
 			}
 			
-			
+			actual_held = null;			
 		}
 	}
 
@@ -757,16 +817,22 @@ public class Player extends Creature
 		{
 			Position pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
     		
-			// set the item at the new position and remove it from the old position in the world
-    		boolean check = world.tileAt(pos).setItem(actual_held);
-    		if (check)
-    		{
-    			world.tileAt(actual_held.getPos()).removeItem(actual_held);
-    			
-    			// update item position
-    			actual_held.setPos(pos);
-    			actual_held = null;
-    		}
+			// Only move n
+			if (!source_world_pos.equals(pos))
+			{
+				// set the item at the new position and remove it from the old position in the world
+	    		boolean check = world.tileAt(pos).setItem(actual_held, ih);
+	    		if (check)
+	    		{
+	    			world.tileAt(actual_held.getPos()).removeItem(actual_held);
+	    			
+	    			// update item position
+	    			actual_held.setPos(pos);
+	    			actual_held = null;
+	    		}
+			}
+			else
+				actual_held = null;
 		}
 		
 		// inv to world
@@ -776,7 +842,7 @@ public class Player extends Creature
 			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
 			
 			// try to add item to world
-    		boolean check = world.tileAt(target_pos).setItem(actual_held);
+    		boolean check = world.tileAt(target_pos).setItem(actual_held, ih);
     		
     		// if successful, update item location and ih and remove from inv.
     		if (check)
@@ -794,7 +860,7 @@ public class Player extends Creature
 		{
 			// put item to the world
 			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
-    		world.tileAt(target_pos).setItem(actual_held);
+    		world.tileAt(target_pos).setItem(actual_held, ih);
     		ih.add_item(actual_held);
     		actual_held.setPos(target_pos);
     		
@@ -820,12 +886,30 @@ public class Player extends Creature
 
     		// if the target item is a container, don't swap it.
     		if (swap_to_world != null)
-				if (swap_to_world.getType() == Item.CONTAINER)
+				if (swap_to_world.getType() == Item.CONTAINER || swap_to_world instanceof StackableItem)
 				{
 					swap_to_world = null;
 				}	    
+    		
+    		boolean isStacked = false;
+	    	if (stackPos)
+	    	{
+	    		StackableItem inv_item = (StackableItem)getInv().getMisc();
+	    		isStacked = inv_item.stack(actual_held);
+	    		if (isStacked)
+	    		{
+	    			ih.remove_item(actual_held);
+					world.tileAt(source_world_pos).removeItem(actual_held);
+	    			stackPos = false;
+	    		}
+	    		else
+	    		{
+	    			swap_to_world = getInv().getMisc();
+					getInv().setMisc(actual_held);
+	    		}
+	    	}
 			
-    		if (!stop)
+	    	if (!stop && !isStacked)
     		{
 	    		// update item to be on player position	
     			actual_held.setPos(getPos());
@@ -839,7 +923,7 @@ public class Player extends Creature
 	    		{
 	    			swap_to_world.setPos(source_world_pos);
 	    			ih.add_item(swap_to_world);
-	    			world.tileAt(source_world_pos).setItem(swap_to_world);
+	    			world.tileAt(source_world_pos).setItem(swap_to_world, ih);
 	    		}
 				
 				
@@ -901,8 +985,24 @@ public class Player extends Creature
 			// try to put the actual held into that inv slot. If it's not possible, stop. If possible, stop = false.
 	    	boolean stop = try_put_inv(actual_held, target_inv);
 	    	
+	    	boolean isStacked = false;
+	    	if (stackPos && swap_inv_to_cnt != null)
+	    	{
+	    		StackableItem inv_item = (StackableItem)swap_inv_to_cnt;
+	    		isStacked = inv_item.stack(actual_held);
+	    		if (isStacked)
+	    		{
+	    			contH.getContainer(source_cont).remove_from_container(source_item_slot);
+	    			getInv().setMisc(inv_item);
+	    			stackPos = false;
+	    		}
+	    		else
+	    		{
+					getInv().setMisc(actual_held);
+	    		}
+	    	}
 	    	// if it was possible, check what's up with the other item
-	    	if (!stop)
+	    	if (!stop && !isStacked)
 	    	{
 	    		// remove actual_held from it's old container
 	    		contH.getContainer(source_cont).remove_from_container(source_item_slot);
@@ -959,6 +1059,7 @@ public class Player extends Creature
 		}
 	}
 
+	boolean stackPos = false;
 	// This method tries to put equip the item or put it into the container/misc container. 
 	// It will return false if it failed to do so or true if the item "moved" successfully.
 	private boolean try_put_inv(Item actual_held, int goingToInv)
@@ -1033,10 +1134,14 @@ public class Player extends Creature
 			// if it is a container, try put the item in
 			if (getInv().getMisc() == null)
 				getInv().setMisc(actual_held);
-				
+			
+			else if (getInv().getMisc() instanceof StackableItem)
+			{
+				stackPos = true;
+			}
+			
 			else if (getInv().getMisc().getType() != Item.CONTAINER)
 				getInv().setMisc(actual_held);
-			
 			else
 				stop = ! ((Container)getInv().getMisc()).add_to_container(actual_held);
 			break;

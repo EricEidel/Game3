@@ -27,6 +27,20 @@ public class Position
 		this.y = pos.getY();
 	}	
 	
+	public boolean equals(Position pos)
+	{
+		if (pos == null)
+			return false;
+		
+		if (getX() != pos.getX())
+			return false;
+		
+		if (getY() != pos.getY())
+			return false;
+		
+		return true;
+	}
+	
 	public String toString()
 	{
 		return x+"/"+y;

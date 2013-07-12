@@ -8,6 +8,7 @@ import creatures.Player;
 
 public class GoldCoin extends Coin
 {
+	private static final int MAX_AMOUNT = 100;
 	private int amount;
 	private int worth;
 
@@ -55,13 +56,6 @@ public class GoldCoin extends Coin
 		setPicture();
 	}
 	
-	public GoldCoin(GoldCoin target, GoldCoin isMoved)
-	{
-		super(target.getPos());
-		this.amount = target.getAmount() + isMoved.getAmount();
-		setPicture();
-	}
-	
 	private void setPicture() 
 	{
 		if (amount == 1)
@@ -72,7 +66,7 @@ public class GoldCoin extends Coin
 			setPic(three_coins.copy());
 		else if (amount == 4)	
 			setPic(four_coins.copy());
-		else if (amount > 5 && amount < 10)
+		else if (amount >= 5 && amount < 10)
 			setPic(five_to_ten_coins.copy());
 		else if (amount > 10 && amount < 21)
 			setPic(eleven_to_twenty_coins.copy());
@@ -111,6 +105,28 @@ public class GoldCoin extends Coin
 	public void use(Player player) 
 	{
 		// TODO break coins into sub groups : 5 coins by click should change into whatever player wants.
+	}
+
+
+
+	@Override
+	public boolean stack(Item item) 
+	{
+		if (! (item instanceof GoldCoin))
+			return false;
+		
+		else
+		{
+			GoldCoin GCItem = (GoldCoin) item;
+			if (GCItem.getAmount() + getAmount() < MAX_AMOUNT )
+			{
+				setAmount(GCItem.getAmount() + getAmount());
+				setPicture();
+				return true;
+			}
+			else
+				return false;
+		}
 	}
 
 }

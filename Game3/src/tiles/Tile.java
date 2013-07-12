@@ -1,6 +1,8 @@
 package tiles;
+import game_3_core.ItemHandler;
 import game_3_core.Position;
 import items.Item;
+import items.StackableItem;
 
 import java.util.ArrayList;
 
@@ -115,19 +117,47 @@ public class Tile
 			return true;
 	}
 
-	public Item getItem() {
+	public Item getItem() 
+	{
 		if (items.isEmpty())
 			return null;
 		
 		return items.get(items.size()-1);
 	}
 
-	public boolean setItem(Item item) 
+	public boolean setItem(Item item, ItemHandler ih) 
 	{
 		if (canPutItem)
 		{
-			items.add(item);
-			return true;
+			Item topItem = getItem();
+			if ((item instanceof StackableItem) && topItem != null)
+			{
+				
+				StackableItem si = ((StackableItem)item);
+				// try to stack the two items - if they're the same type and there's not too many.
+
+				boolean check = si.stack(topItem);
+	
+				if (check)
+				{
+					// add item with changed amount
+					items.remove(items.size()-1);
+					ih.remove_item(topItem);
+					items.add(si);
+					return true;
+				}
+				else
+				{
+					items.add(topItem);
+					items.add(item);
+					return true;
+				}
+			}
+			else
+			{
+				items.add(item);
+				return true;
+			}
 		}
 		return false;
 	}
