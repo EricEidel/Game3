@@ -1,9 +1,7 @@
 Game3
 =====
 
-A small RPG game build using slick and (hopfully) niffty.
-
-This is just me messing around with Slick2D and the Simple User Interface lib for it.
+A small RPG game build using slick and the SUI lib for it.
 
 Check out Slick2D here: http://slick.ninjacave.com/
 
