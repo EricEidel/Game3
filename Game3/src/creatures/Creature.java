@@ -14,6 +14,7 @@ import org.newdawn.slick.Image;
 
 import tiles.Tile;
 import GUI.Map;
+import GUI.MyChat;
 import GUI.Status;
 import abilities.Spell;
 
@@ -93,9 +94,10 @@ public abstract class Creature
     private Item deadItem;
 
 	private String see;
-	
+
 	public Creature(Position pos, Map world)
 	{
+
 		setMoving(5);
 		attacked = false;
 		setTarget(null);

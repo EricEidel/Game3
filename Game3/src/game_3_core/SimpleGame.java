@@ -35,7 +35,7 @@ public class SimpleGame extends BasicGame
 	
 	static public GameContainer gc;
 	public static Random rand = new Random();
-	public MyChat chat;
+	static public MyChat chat;
 	
 	Wolf wolf;
 	Item sword;
@@ -71,7 +71,7 @@ public class SimpleGame extends BasicGame
     	 //Position pos_item = new Position(15,10);
     	 //sword = new Sword(pos_item);
     	 //ih.add_item(sword); 
-    	 chat = new MyChat();
+    	 chat = new MyChat(player);
 
     	
     	 
@@ -99,10 +99,8 @@ public class SimpleGame extends BasicGame
     	player.update(land, delta);
     	ch.checkDead(land, ih);
     	
-    	if (gc.getInput().isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
-    		chat.update();
-    	
     	display.update(gc, delta);
+    	chat.update();
     }
     
   

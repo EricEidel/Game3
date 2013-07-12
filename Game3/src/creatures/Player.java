@@ -16,6 +16,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import GUI.HUD;
+import GUI.MyChat;
 import GUI.Status;
 import GUI.Map;
 import abilities.Spell;
@@ -40,12 +41,13 @@ public class Player extends Creature
 
 	public ContainerHandler contH;
 	private Item tryUse;
+	MyChat chat;
 	
 	public Player(Position pos, Map world)
 	{
 		super(pos, world);
 		gc = SimpleGame.getGC();
-   	 	
+		chat = SimpleGame.chat;
 		setSpeed(600); // How often a player moves a tile - miliseconds
 		setAttackSpeed(1000);
 		
@@ -121,8 +123,17 @@ public class Player extends Creature
 	{
 		if (getTarget().getPos().near(getPos(), 1))
 		{	
+			
 			getTarget().takeDamage(5);
-			System.out.println("You delt 5 damage to "+getTarget().getName() + " and it still has " + getTarget().getHp() + "left!");
+			if (getTarget().getHp()!=0)
+			{
+				chat.game_message("You hit the "+getTarget().getName() + " for  5 damage.");
+			}
+			else
+			{
+				chat.game_message("You have killed a "+getTarget().getName() + "!");
+			}
+				
 		}
 	}
 
@@ -1184,5 +1195,10 @@ public class Player extends Creature
 			}
 			deltaUse = 0;
 		}
+	}
+
+	public void setChat(MyChat chat) 
+	{
+		this.chat= chat;
 	}
 }

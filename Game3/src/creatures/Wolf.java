@@ -1,6 +1,7 @@
 package creatures;
 
 import game_3_core.Position;
+import game_3_core.SimpleGame;
 import items.Dead_wolf;
 import items.Item;
 

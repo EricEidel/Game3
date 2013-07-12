@@ -178,7 +178,7 @@ public class ScrollPane extends Container implements ScrollConstants {
         
         float width = viewport.getWidth();
         float height = viewport.getHeight();
-        
+ 
         if (vert) //vertical exists
             viewport.setWidth(getWidth()-verticalScrollBar.getWidth());
         else
