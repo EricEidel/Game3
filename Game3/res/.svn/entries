@@ -1,0 +1,58 @@
+8
+
+dir
+88
+https://slick-sui.googlecode.com/svn/trunk/sui/src/res
+https://slick-sui.googlecode.com/svn
+
+
+
+2008-01-20T07:22:25.065848Z
+85
+dave.des
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+688cc2e3-bd2b-0410-8374-434c9faad705
+
+test
+dir
+
+suitest.xml
+file
+
+
+
+
+2008-01-20T07:12:18.640625Z
+b52e0b9e4248c32951ed2785a153f088
+2008-01-20T07:22:25.065848Z
+85
+dave.des
+
+steelBlue.xml
+file
+
+
+
+
+2007-11-12T03:00:05.082271Z
+ce4c9d5bb023e113aa615e366ba12381
+2007-12-03T18:44:36.854447Z
+15
+dave.des
+
+skin
+dir
+
