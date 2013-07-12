@@ -1469,8 +1469,6 @@ public class Player extends Creature
 		// when mouse down, get the item from one of two places - inv or cont.
 		// when mouse down + ctrl, try get item from world.
 	
-
-		
 		// Get the actual_held and remember where you got it.
 		if ((actual_held == null)&&(mouseDown))
 		{
@@ -1530,6 +1528,7 @@ public class Player extends Creature
 			else if (isOnCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
 			{
 				going_to_cnt(world, ih);
+				
 				// moved, reset all
 				source_world_pos = null;
 				source_inv = -1;
@@ -1543,21 +1542,74 @@ public class Player extends Creature
 	
 	private void going_to_cnt(Map world, ItemHandler ih) 
 	{
-		// TODO Auto-generated method stub
+		Input input = gc.getInput();
 		
-		// if was from world
+		getItemFromCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+		int target_cont_num = cont_num;
+		
+		Container target_cont = contH.getContainer(target_cont_num);
+		
+		// world to container
 		if (source_world_pos != null)
 		{
+			// only take from world if player is 1 or 0 tiles away
+			if (actual_held.getPos().near(getPos(), 1))
+			{
+				// if the target container is not null and is not full
+				if (target_cont !=null )
+				{
+					if (!target_cont.isFull())
+					{
+						// try to add
+						boolean check = target_cont.add_to_container(actual_held);
+						if (check)
+						{
+							// if added, remove from world
+							world.tileAt(source_world_pos).removeItem(actual_held);
+							ih.remove_item(actual_held);
+						}						
+					}
+				}
+			}
 			
+			actual_held = null;
 		}
-		// if was from inv
+		// inv to cont
 		else if (source_inv != -1)
 		{
-			
+			// if the target container is not null and is not full
+			if (target_cont !=null )
+			{
+				if (!target_cont.isFull())
+				{
+					// try to add
+					boolean check = target_cont.add_to_container(actual_held);
+					if (check)
+					{
+						// if added, remove from inv
+						remove_from_inv(source_inv);
+					}						
+				}
+			}
 		}
 		// if was from cont
 		else if ((source_cont!=-1)&& (source_item_slot!=-1))
 		{
+			if (target_cont !=null )
+			{
+				if (!target_cont.isFull())
+				{
+					// try to add
+					boolean check = target_cont.add_to_container(actual_held);
+					if (check)
+					{
+						// if added, remove from inv
+						Container from_cont = contH.getContainer(source_cont);
+						from_cont.remove_from_container(source_item_slot);
+					}						
+				}
+			}
+			
 			
 		}
 	}
@@ -1736,9 +1788,9 @@ public class Player extends Creature
 		}
 	}
 
-	private void remove_from_inv(int source_inv2) 
+	private void remove_from_inv(int inv_slot) 
 	{
-		switch (source_inv2)
+		switch (inv_slot)
 		{
 		case 1:
 			getInv().setNeck(null);
