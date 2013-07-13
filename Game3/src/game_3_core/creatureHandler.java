@@ -3,7 +3,6 @@ package game_3_core;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.tiled.Tile;
 
 import GUI.Map;
 import creatures.Creature;

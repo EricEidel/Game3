@@ -1125,12 +1125,12 @@ public abstract class Component {
     protected void fireMouseWheelEvent(int change) {
         MouseWheelEvent evt = null;
         
-        final MouseWheelListener[] listeners =
-                (MouseWheelListener[])listenerList.getListeners(
-                MouseWheelListener.class);
-        for (int i=0; i<listeners.length; i++) {
+        final MouseWheelListener[] listeners = (MouseWheelListener[])listenerList.getListeners(MouseWheelListener.class);
+        for (int i=0; i<listeners.length; i++) 
+        {
             //lazily create it
-            if (evt==null) {
+            if (evt==null) 
+            {
                 evt = new MouseWheelEvent(this, change);
             }
             listeners[i].mouseWheelMoved(evt);

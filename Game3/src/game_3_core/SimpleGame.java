@@ -21,8 +21,10 @@ import creatures.Wolf;
   
 public class SimpleGame extends BasicGame
 {
+	int mouse_wheel_moved = 0;
+	int mouse_wheel_before = 0;
     static private Display display;
-	public static boolean debug = true;
+	public static boolean debug = false;
 	// input control
 	public static Position start_player_pos = new Position(Player.X_PLAYER_START, Player.Y_PLAYER_START);
 	
@@ -73,7 +75,7 @@ public class SimpleGame extends BasicGame
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player);
 
-    	
+    	 
     	 
     
          
@@ -83,6 +85,11 @@ public class SimpleGame extends BasicGame
     @Override
     public void update(GameContainer gc, int delta)  throws SlickException     
     {
+    	// Check if mouse wheel happened.
+    	if (mouse_wheel_before == mouse_wheel_moved)
+    		mouse_wheel_moved = 0;
+    	mouse_wheel_before = mouse_wheel_moved;
+    	
     	ch.checkActive();
     	ch.move(land, delta);
     	// check if any of the creatures should go active
@@ -100,10 +107,14 @@ public class SimpleGame extends BasicGame
     	ch.checkDead(land, ih);
     	
     	display.update(gc, delta);
-    	chat.update();
+    	chat.update(delta, mouse_wheel_moved);
+    }
+
+    public void mouseWheelMoved(int moved)
+    {
+    	mouse_wheel_moved = moved;
     }
     
-  
     public void render(GameContainer gc, Graphics g) throws SlickException 
     {    	 
     	bg.draw();
@@ -126,11 +137,10 @@ public class SimpleGame extends BasicGame
    	 	player.contH.draw();
    	 	player.draw_drag_item();
    	 	
-   	 	//chat.render(g, gc);
    	 	display.render(gc, g);
     }
   
-
+    // TODO all the way down button?
     
 
     public static void main(String[] args) throws SlickException

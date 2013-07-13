@@ -16,9 +16,9 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import GUI.HUD;
+import GUI.Map;
 import GUI.MyChat;
 import GUI.Status;
-import GUI.Map;
 import abilities.Spell;
 
 
@@ -42,6 +42,7 @@ public class Player extends Creature
 	public ContainerHandler contH;
 	private Item tryUse;
 	MyChat chat;
+	private boolean enableKeyMovment = true;
 	
 	public Player(Position pos, Map world)
 	{
@@ -89,7 +90,7 @@ public class Player extends Creature
 			System.out.println("No such picture");
 		}
 		
-		setSee("You see yourself. You are as handsome as always.");
+		setSee("You see yourself. You are as handsome as always."); // TODO
 	}
 
 	static public int getPlayerXCenter()
@@ -170,39 +171,42 @@ public class Player extends Creature
 		Input input = gc.getInput();
 		boolean manual_move = false;
 		
-		if(input.isKeyPressed(Input.KEY_A)||input.isKeyDown(Input.KEY_A))
+		if (enableKeyMovment)
 		{
-			setOldPos(getPos());
-			moveTo(new Position(getPos().getX()-1, getPos().getY()), land);
-			manual_move = true;
-			setPath(null);
-		}
-
-		else if(input.isKeyPressed(Input.KEY_D)||input.isKeyDown(Input.KEY_D))
-		{
-			setOldPos(getPos());
-			moveTo(new Position(getPos().getX()+1, getPos().getY()), land);
-			manual_move = true;
-			setPath(null);
-		}
-
-		else if(input.isKeyPressed(Input.KEY_W)||input.isKeyDown(Input.KEY_W))
-		{
-			setOldPos(getPos());
-			moveTo(new Position(getPos().getX(), getPos().getY()-1), land);
-			manual_move = true;
-			setPath(null);
-		}
+			if(input.isKeyPressed(Input.KEY_A)||input.isKeyDown(Input.KEY_A))
+			{
+				setOldPos(getPos());
+				moveTo(new Position(getPos().getX()-1, getPos().getY()), land);
+				manual_move = true;
+				setPath(null);
+			}
 	
-		else if(input.isKeyPressed(Input.KEY_S)||input.isKeyDown(Input.KEY_S))
-	    {
-	    	setOldPos(getPos());
-	    	moveTo(new Position(getPos().getX(), getPos().getY()+1), land);
-	    	manual_move = true;
-			setPath(null);
-	    }
+			else if(input.isKeyPressed(Input.KEY_D)||input.isKeyDown(Input.KEY_D))
+			{
+				setOldPos(getPos());
+				moveTo(new Position(getPos().getX()+1, getPos().getY()), land);
+				manual_move = true;
+				setPath(null);
+			}
+	
+			else if(input.isKeyPressed(Input.KEY_W)||input.isKeyDown(Input.KEY_W))
+			{
+				setOldPos(getPos());
+				moveTo(new Position(getPos().getX(), getPos().getY()-1), land);
+				manual_move = true;
+				setPath(null);
+			}
+		
+			else if(input.isKeyPressed(Input.KEY_S)||input.isKeyDown(Input.KEY_S))
+		    {
+		    	setOldPos(getPos());
+		    	moveTo(new Position(getPos().getX(), getPos().getY()+1), land);
+		    	manual_move = true;
+				setPath(null);
+		    }
+		}
 
-		else if(!manual_move)
+		if(!manual_move)
 	    {
 	    	if (getPath() != null)
 	    	{
@@ -730,7 +734,18 @@ public class Player extends Creature
 						}
 					}
 					
-					if (!target_cont.isFull() && !isStacked)
+					boolean extra_cont_check = false;
+					if (targetItemCont instanceof Container)
+					{
+						Container tempCont = (Container)targetItemCont;
+						extra_cont_check = tempCont.add_to_container(actual_held);
+						
+						// if added, remove from world
+						world.tileAt(source_world_pos).removeItem(actual_held);
+						ih.remove_item(actual_held);
+					}
+					
+					if (!target_cont.isFull() && !isStacked && !extra_cont_check)
 					{
 						// try to add
 						boolean check = target_cont.add_to_container(actual_held);
@@ -746,7 +761,6 @@ public class Player extends Creature
 			
 			actual_held = null;
 		}
-		// TODO cont to inv is messed up - will create 100 gold coins when moving 4 from cont to 1 in misc.
 		
 		// inv to cont
 		else if (source_inv != -1)
@@ -767,7 +781,17 @@ public class Player extends Creature
 					}
 				}
 				
-				if (!target_cont.isFull() && !isStacked)
+				boolean extra_cont_check = false;
+				if (targetItemCont instanceof Container)
+				{
+					Container tempCont = (Container)targetItemCont;
+					extra_cont_check = tempCont.add_to_container(actual_held);
+					
+					// if added, remove from world
+					remove_from_inv(source_inv);
+				}
+				
+				if (!target_cont.isFull() && !isStacked && !extra_cont_check)
 				{
 					// try to add
 					boolean check = target_cont.add_to_container(actual_held);
@@ -801,7 +825,21 @@ public class Player extends Creature
 						}
 					}
 					
-					if (!target_cont.isFull() && !isStacked)
+					boolean extra_cont_check = false;
+					if (targetItemCont instanceof Container)
+					{
+						Container tempCont = (Container)targetItemCont;
+						extra_cont_check = tempCont.add_to_container(actual_held);
+						
+						// if added, remove from world
+						remove_from_inv(source_inv);
+						
+						// if added, remove from cont
+						Container from_cont = contH.getContainer(source_cont);
+						from_cont.remove_from_container(source_item_slot);
+					}
+					
+					if (!target_cont.isFull() && !isStacked && !extra_cont_check)
 					{
 						// try to add
 						boolean check = target_cont.add_to_container(actual_held);
@@ -1183,9 +1221,13 @@ public class Player extends Creature
 				getItemFromCont(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
 				int temp_cont_num = cont_num;
 				int temp_item_num = item_slot;
-				Item temp = contH.getContainer(temp_cont_num).get_item(temp_item_num);
-				if (temp!= null)
-					temp.use(this);
+				Container tempCont = contH.getContainer(temp_cont_num);
+				if (tempCont!=null)
+				{
+					Item temp = tempCont.get_item(temp_item_num);
+					if (temp!= null)
+						temp.use(this);
+				}
 			}
 			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()) && mouseRightClick)
 			{
@@ -1200,5 +1242,13 @@ public class Player extends Creature
 	public void setChat(MyChat chat) 
 	{
 		this.chat= chat;
+	}
+
+	public boolean isEnableKeyMovment() {
+		return enableKeyMovment;
+	}
+
+	public void setEnableKeyMovment(boolean enableKeyMovment) {
+		this.enableKeyMovment = enableKeyMovment;
 	}
 }
