@@ -7,13 +7,15 @@ import java.util.Random;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
 import sui.Display;
+import sui.Label;
+import sui.Popup;
 import GUI.Map;
 import GUI.MyChat;
 import creatures.Player;
@@ -73,13 +75,13 @@ public class SimpleGame extends BasicGame
     	 //Position pos_item = new Position(15,10);
     	 //sword = new Sword(pos_item);
     	 //ih.add_item(sword); 
-    	 chat = new MyChat(player);
+    	 chat = new MyChat(player, gc.getGraphics());
 
-    	 
-    	 
-    
-         
-    	 
+         // TODO shift + click to see item
+         // TODO Use coin to break , have a popup coming saying wtf, how much to break?
+         // TODO Battle text and messages displayed mid-screen for words you say.
+         // TODO Once that's done, look into creating obsticles.
+         // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
     }
     
     @Override
@@ -90,11 +92,13 @@ public class SimpleGame extends BasicGame
     		mouse_wheel_moved = 0;
     	mouse_wheel_before = mouse_wheel_moved;
     	
-    	ch.checkActive();
-    	ch.move(land, delta);
     	// check if any of the creatures should go active
-    	
-    	
+    	ch.checkActive();
+    	// Move active creatuers
+    	ch.move(land, delta);
+    
+    	//player interactions with the world:
+  
     	// player input checks
     	player.check_mouse_click(land);
         player.check_attack_command(land);
@@ -102,7 +106,10 @@ public class SimpleGame extends BasicGame
         // check all GUI item movements and use
         player.check_itemMove(land, ih);
         player.check_item_use(delta);
-        
+  
+        // check if player tried to "see" anything.
+        player.check_see(land, delta);
+        // update methods for other components
     	player.update(land, delta);
     	ch.checkDead(land, ih);
     	
@@ -138,6 +145,8 @@ public class SimpleGame extends BasicGame
    	 	player.draw_drag_item();
    	 	
    	 	display.render(gc, g);
+   	 	chat.drawSeeMessage();
+   	 	chat.drawSaid();
     }
   
     // TODO all the way down button?

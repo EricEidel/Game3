@@ -3,6 +3,7 @@ package GUI;
 import game_3_core.SimpleGame;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
 
 import creatures.Creature;
@@ -19,7 +20,10 @@ public class Status
     int x_tile_dist;
     int y_tile_dist;
     int len_name;
-    
+    public static Font f;
+    {
+    	f = SimpleGame.getGC().getGraphics().getFont();
+    }
 	Creature c;
 
 	public Status(Creature c)

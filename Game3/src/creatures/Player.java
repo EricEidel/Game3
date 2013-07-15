@@ -15,6 +15,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import tiles.Tile;
 import GUI.HUD;
 import GUI.Map;
 import GUI.MyChat;
@@ -90,7 +91,7 @@ public class Player extends Creature
 			System.out.println("No such picture");
 		}
 		
-		setSee("You see yourself. You are as handsome as always."); // TODO
+		setSee("You see yourself. You are as handsome as always."); 
 	}
 
 	static public int getPlayerXCenter()
@@ -228,7 +229,7 @@ public class Player extends Creature
 	{
 		Input input = gc.getInput();
 		
-		if (input.isMousePressed(Input.MOUSE_LEFT_BUTTON) && !(input.isKeyDown(Input.KEY_RCONTROL)) && !((input.isKeyDown(Input.KEY_LCONTROL))))
+		if (!(input.isKeyDown(Input.KEY_LSHIFT)||input.isKeyDown(Input.KEY_RSHIFT)) && input.isMousePressed(Input.MOUSE_LEFT_BUTTON) && !(input.isKeyDown(Input.KEY_RCONTROL)) && !((input.isKeyDown(Input.KEY_LCONTROL))))
     	{
     		//System.out.println("click!");
     		Position target = proccess_mouse(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
@@ -1250,5 +1251,51 @@ public class Player extends Creature
 
 	public void setEnableKeyMovment(boolean enableKeyMovment) {
 		this.enableKeyMovment = enableKeyMovment;
+	}
+
+	// if the player hold shift and clicks, popup a "see" message.
+	public void check_see(Map land, int delta) 
+	{
+		Input input = gc.getInput();
+		
+		if ((input.isKeyDown(Input.KEY_LSHIFT)||input.isKeyDown(Input.KEY_RSHIFT))&&input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON))
+		{
+			if (isOnWorld(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				Position temp_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				Tile temp_tile= land.tileAt(temp_pos);
+				if (temp_tile != null)
+				{
+					// check to see if there's a creature there?
+					Creature temp_c = temp_tile.getC();
+					Item temp_item = temp_tile.getItem();
+					
+					if (temp_c != null)
+					{
+						chat.add_see_meesage(temp_c.getSee());
+						System.out.println(temp_c.getSee());
+					}
+					else if (temp_item != null)
+					{
+						chat.add_see_meesage(temp_item.getSee());
+						System.out.println(temp_item.getSee());
+					}
+					else
+					{
+						chat.add_see_meesage(temp_tile.getSee());
+						System.out.println(temp_tile.getSee());
+					}
+				}
+			}
+			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
+			{
+				Item temp_item = getItemFromInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+				if (temp_item != null)
+				{
+					chat.add_see_meesage(temp_item.getSee());
+					System.out.println(temp_item.getSee());
+				}
+			}
+		}
 	}
 }

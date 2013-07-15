@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
 
 import sui.Button;
 import sui.Display;
 import sui.Label;
-import sui.Popup;
 import sui.TextArea;
 import sui.TextField;
 import sui.event.ActionEvent;
@@ -22,7 +23,7 @@ import creatures.Player;
 
 public class MyChat 
 {
-	final int MAX_LINES = 10;
+	final int MAX_LINES = 9;
 	
 	Button upButton;
 	Button downButton;
@@ -40,21 +41,27 @@ public class MyChat
 	private int mouse_wheel_moved;
 	String time;
 	
-	Label label;
+    Label see_label = new Label();
 	
-	public MyChat(final Player player)
+    private Display display;
+	private Graphics g;
+	
+	private ChatLine[] chatLines;
+	
+    public MyChat(final Player player, Graphics g) throws SlickException
 	{
+    	this.g = g;
 		all_text = new ArrayList<String>();
 		this.player = player;
 		player.setChat(this);
-		Display display = SimpleGame.getDisplay();
+		display = SimpleGame.getDisplay();
 			
 		time = getTime();
 	
-		String welcome = time + " Welcome to Game 3! I hope you'll enjoy it.\n";
+		String welcome = " "+time + " Welcome to Game 3! I hope you'll enjoy it.\n";
 		all_text.add(welcome);
 		index++;
-		area = new TextArea(welcome, 64, 10);
+		area = new TextArea("",64, 10);
 		area.setEditable(false);
 		area.setBackground(Color.lightGray);
         area.setLocation(10, 570);
@@ -75,7 +82,14 @@ public class MyChat
         box = new TextField();
         box.setLocation(10, 570+area.getHeight()+10);
         box.setSize(area.getWidth(), 20);
+        box.setMaxChars(255);
         
+        chatLines = new ChatLine[MAX_LINES];
+
+        for (int i = 0; i<MAX_LINES; i++)
+        {
+        	chatLines[i] = new ChatLine(10, 575+i*18, box.getWidth(), display);
+        }
         
         ActionListener textAction = new ActionListener() {
             public void actionPerformed(ActionEvent ev) 
@@ -86,11 +100,112 @@ public class MyChat
                 	box.releaseFocus();
                 	deltaEnter = 0;
                 	return;
-                }
-                all_text.add(fromat_text(text));    
-                index++;
+                }// adds the formated text to all_text after breaking it into chat lines. Returns the text broken with \n when it's too much to display;
+                String fixed = add_text_and_format(fromat_text(text));                  
+                show_on_screen(fixed);
+                deltaSaid = show_said_message;
                 deltaEnter = 0;
             }
+            
+            /*
+            
+            // adds the formated text to all_text after breaking it into chat lines. Returns the text broken with \n when it's too much to display.
+			private String add_text_and_format(String format_text) 
+			{
+				int index_str = 0;
+				String show_to_screen = "";
+                String new_str = "";
+                System.out.println(format_text.length());
+                while (index_str < format_text.length())
+                {
+	                while (SimpleGame.getGC().getGraphics().getFont().getWidth(new_str) < area.getWidth()-140 && index_str < format_text.length())
+	                {
+	                	new_str += format_text.charAt(index_str);
+	                	index_str ++;
+	                }
+	                all_text.add(new_str);
+	                index++;
+	                show_to_screen += new_str+"\n";
+	                new_str="";
+                }
+
+                return show_to_screen;
+			}
+         };
+            
+             */
+            
+			// adds the formated text to all_text after breaking it into chat lines. Returns the text broken with \n when it's too much to display.
+			private String add_text_and_format(String format_text) 
+			{
+				String[] all_strings = format_text.split(" ");
+				for (String s: all_strings)
+				{
+					System.out.print(s);
+				}
+				System.out.println();
+				all_strings = make_sure_no_long_strings(all_strings);
+
+				int index_str = 0;
+				String show_to_screen = "";
+                String new_str = "";
+                while (index_str < all_strings.length)
+                {
+                	while (SimpleGame.getGC().getGraphics().getFont().getWidth(new_str + " " + all_strings[index_str]) < area.getWidth()-140)
+                	{
+                		new_str += " " + all_strings[index_str];
+	                	index_str ++;
+	                	if (index_str >= all_strings.length)
+	                		break;
+                	}
+
+	                all_text.add(new_str);
+	                index++;
+	                show_to_screen += new_str+"\n";
+	                new_str="";
+                }
+
+                return show_to_screen;
+			}
+
+			// return a string array where none of the strings is longer then allowed.
+			private String[] make_sure_no_long_strings(String[] all_strings) 
+			{
+				ArrayList<String> strings = new ArrayList<String>();
+				
+				for (String s: all_strings)
+				{
+					if (SimpleGame.getGC().getGraphics().getFont().getWidth(" " + s) < area.getWidth()-140)
+						strings.add(s);
+					else
+					{
+						int index_str = 0;
+		                String new_str = "";
+		                while (index_str < s.length())
+		                {
+			                while (SimpleGame.getGC().getGraphics().getFont().getWidth("  "+new_str) < area.getWidth()-140 && index_str < s.length())
+			                {
+			                	new_str += s.charAt(index_str);
+			                	index_str ++;
+			                }
+			                
+			                strings.add(new_str);
+			                new_str="";
+		                }
+					}
+				}
+				
+				String[] ret = new String[strings.size()];
+				int i = 0;
+				for (String s: strings)
+				{
+					ret[i] = s;
+					i++;
+				}
+			
+				
+				return ret;
+			}
          };
         
         box.addActionListener(textAction);
@@ -120,20 +235,8 @@ public class MyChat
          };
         
         downButton.addActionListener(dwonButList);
-         
-        label = new Label("test");
-        label.setLocation(1000, 600);
-        label.setZIndex(Popup.POPUP_LAYER);
-        label.setForeground(Color.white);
-        label.pack();
-        
-        // TODO shift + click to see item
-        // TODO Use coin to break , have a popup coming saying wtf, how much to break?
-        // TODO Battle text and messages displayed mid-screen for words you say.
-        // TODO Once that's done, look into creating obsticles.
-        // TODO fix wolf moving when can't move - change it's moving to no_mov if at the same place.
-        
-        display.add(label);
+    	
+    	display.add(see_label);
         display.add(area);
         display.add(box);
         display.add(upButton);
@@ -159,17 +262,7 @@ public class MyChat
 		}
 	
 		// if there are fewer then max_lines entries, write all of them.
-		String str = "";
-		area.setText(str);
-		if (all_text.size()<MAX_LINES)
-			for (int i = 0; i < all_text.size(); i++)
-				str += (all_text.get(i));
-		else
-		{
-			for (int i = index-MAX_LINES; i<index; i++)
-				str += (all_text.get(i));
-		}
-		area.setText(str);
+		populate_labels();
 
 		
 		// check if player movment should be locked or not.
@@ -193,7 +286,79 @@ public class MyChat
 			{
 				index = Math.min(all_text.size(), temp); 
 			}
+		}
+		
+		// time for drawing the see message	
+		deltaDrawSee -= delta;
+		deltaSaid -=delta;
+	}
+	
+	private void populate_labels() 
+	{
+		if (all_text.size()<MAX_LINES)
+			for (int i = 0; i < all_text.size(); i++)
+			{
+				chatLines[i].setText(all_text.get(i));
+			}
+		else
+		{
+			int chat_line_index = 0;
+			for (int i = index-MAX_LINES; i<index; i++)
+			{
+				chatLines[chat_line_index].setText(all_text.get(i));
+				chat_line_index++;
+			}
+		}
+	}
+
+	private String msg;
+	private int show_see_message = 3000;
+	private int show_said_message = 3000;
+	private int deltaSaid;
+	private int deltaDrawSee =0 ;
+	
+	public void add_see_meesage(String msg)
+	{
+		this.msg = msg;
+		deltaDrawSee = show_see_message;
+	}
+
+	public void drawSeeMessage() 
+	{
+		if (deltaDrawSee > 0)
+		{
+			if (msg!=null)
+			{
+				g.setColor(Color.green);
+				int len_name = g.getFont().getWidth(msg);
+			    len_name = (Map.SIZE_OF_TILE - len_name)/2;
+			    g.drawString(msg, 350+len_name, 100);
+			    g.setColor(Color.black);
+			}
+		}
+	}
+	
+	private String said;
+	public void show_on_screen(String msg)
+	{
+		this.said = msg;
+		deltaSaid = show_said_message;
+	}
+	
+	public void drawSaid() 
+	{
+		if (deltaSaid > 0)
+		{
+			if (said!=null)
+			{
+				g.setColor(Color.yellow);
 			
+				int len_name = Math.min(g.getFont().getWidth(said), 600);
+			    len_name = (Map.SIZE_OF_TILE - len_name)/2;
+			    
+			    g.drawString(said, 350+len_name, 175);
+			    g.setColor(Color.black);
+			}
 		}
 	}
 	
@@ -210,7 +375,7 @@ public class MyChat
 	public void game_message(String text)
 	{
 		time = getTime();
-		all_text.add(time+ " " +text+"\n");
+		all_text.add(" "+time+ " " +text+"\n");
 		index++;
 	}
 	
@@ -218,7 +383,7 @@ public class MyChat
 	{
 		time = getTime();
 		String name = player.getName();
-		String message = time + " " +name + " said: " + text+"\n";
+		String message = time + " " +name + " said: " + text + "\n";
 		box.setText("");
 		box.grabFocus();
 		return message;

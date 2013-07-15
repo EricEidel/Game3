@@ -118,6 +118,7 @@ public abstract class Creature
 	
 	public void move(Map world) 
 	{
+		setOldPos(getPos());
 		if (frindly)
 		{
 	    	int des = 1 + rand.nextInt(4);
@@ -157,6 +158,8 @@ public abstract class Creature
 				path = world.getGraph(getPos(), target.getPos()).findShortestPath();
 			}
     	}
+		if (getPos()==getOldPos())
+			setMoving(no_move);
 	}
 	
 	public void melee_attack()

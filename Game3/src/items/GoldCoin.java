@@ -44,6 +44,17 @@ public class GoldCoin extends Coin
 		this.amount = 1;
 		this.worth = 1;
 		setPicture();
+		setSeeByAmount();
+	}
+
+
+
+	private void setSeeByAmount() 
+	{
+		if (amount == 1)
+			setSee("You see a golden coin");
+		else 
+			setSee("You see "+ amount + " golden coins.");
 	}
 
 
@@ -54,6 +65,7 @@ public class GoldCoin extends Coin
 		this.amount = amount;
 		this.worth = 1;
 		setPicture();
+		setSeeByAmount();
 	}
 	
 	private void setPicture() 
@@ -93,6 +105,7 @@ public class GoldCoin extends Coin
 	public void setAmount(int amount) 
 	{
 		this.amount = amount;
+		setSeeByAmount();
 	}
 
 	@Override

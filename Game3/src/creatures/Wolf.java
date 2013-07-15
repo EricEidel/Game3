@@ -24,7 +24,7 @@ public class Wolf extends Creature
 		setName("Wolf");
 		setStatus(new Status(this));
 		setDead(false);
-		
+		setSee("You see a wolf.");
 		setSpeed(800);
 		setHp(10);
 		
