@@ -4,20 +4,24 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
 
+import sui.Display;
+import sui.Label;
 import GUI.Map;
 import creatures.Creature;
 import creatures.Player;
 
-public class creatureHandler 
+public class CreatureHandler 
 {
 	private ArrayList<Creature> creatures;
 	private Player player;
 	
-	public creatureHandler(Player player)
+	private ArrayList<LabelTracker> dead_labels;
+	
+	public CreatureHandler(Player player)
 	{
 		creatures = new ArrayList<Creature>();
 		this.player = player;
-		
+		dead_labels = new ArrayList<LabelTracker>();
 	}
 	
 	public void draw(Graphics g)
@@ -58,7 +62,7 @@ public class creatureHandler
 		}
 	}
 
-	public void checkDead(Map land, ItemHandler ih)
+	public void checkDead(Map land, ItemHandler ih, Display display)
 	{
 		ArrayList<Creature> dead_c = new ArrayList<Creature>();
 		for (Creature c: creatures)
@@ -73,7 +77,10 @@ public class creatureHandler
 		}
 		
 		for (Creature c: dead_c)
+		{
 			creatures.remove(c);
+			dead_labels.add(new LabelTracker(c, c.getDamageTaken(), c.getDeltaDamage()));
+		}
 	}
 
 	public void checkActive() 
@@ -109,5 +116,60 @@ public class creatureHandler
 		    		c.setInputDelta(0);
 			}
 		}
+	}
+
+	public void updateBattleText(int delta, Display display) 
+	{		
+		for (Creature c: creatures)
+		{
+			if (c.isActive())
+			{
+				int deltaDamage = c.getDeltaDamage();
+				deltaDamage -= delta;
+				c.setDeltaDamage(deltaDamage);
+
+				if (deltaDamage > 0)
+				{
+					drawDamageBT(c , delta, display);
+				}
+				else
+				{
+					c.getDamageTaken().setText("");
+				}
+			
+			}
+		}
+		
+		ArrayList<LabelTracker> to_remove = new ArrayList<LabelTracker>();
+		
+		for (LabelTracker lt: dead_labels)
+		{
+			lt.delta -= delta;
+			if (lt.delta <= 0)
+			{
+				lt.label.setText("");
+				to_remove.add(lt);
+			}
+			else
+			{
+				drawDamageBT(lt.c , delta, display);
+			}
+		}
+		
+		for (LabelTracker lt: to_remove)
+		{
+			dead_labels.remove(lt);
+			display.remove(lt.label);
+		}
+	}
+
+
+	private void drawDamageBT(Creature c, int delta, Display display) 
+	{		
+		Label DamageTaken = c.getDamageTaken();
+		c.animateBT();
+		DamageTaken.setVisible(true);
+		DamageTaken.pack();
+		display.add(DamageTaken);
 	}
 }

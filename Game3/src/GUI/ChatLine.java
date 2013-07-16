@@ -10,13 +10,14 @@ public class ChatLine
 	private Label label;
 	private Color defualt = Color.black;
 	
-	public ChatLine(float x, float f, float g, Display d)
+	public ChatLine(float x, float y, float w, Display d)
 	{
 		label = new Label();
-		label.setLocation(x, f);
+		label.setLocation(x, y);
 		label.setVisible(true);
+		label.setWidth(w);
+		label.setZIndex(Label.POPUP_LAYER);
 		label.pack();
-		label.setWidth(g);
 		d.add(label);
 	}
 	

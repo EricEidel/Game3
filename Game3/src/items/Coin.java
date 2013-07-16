@@ -9,6 +9,7 @@ public abstract class Coin extends StackableItem
 	{
 		super(pos);
 		setType(Item.COIN);
+		setMovable(true);
 	}
 	
 	public Coin(Coin target, Coin isMoved)

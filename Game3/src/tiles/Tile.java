@@ -63,6 +63,16 @@ public class Tile
 	}
 	
 	
+	public ArrayList<Item> getItems() {
+		return items;
+	}
+
+
+	public void setItems(ArrayList<Item> items) {
+		this.items = items;
+	}
+
+
 	public int getType() 
 	{
 		return type;
@@ -137,7 +147,6 @@ public class Tile
 				// try to stack the two items - if they're the same type and there's not too many.
 
 				boolean check = si.stack(topItem);
-	
 				if (check)
 				{
 					// add item with changed amount
@@ -148,7 +157,6 @@ public class Tile
 				}
 				else
 				{
-					items.add(topItem);
 					items.add(item);
 					return true;
 				}

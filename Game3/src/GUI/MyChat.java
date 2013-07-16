@@ -25,8 +25,9 @@ public class MyChat
 {
 	final int MAX_LINES = 9;
 	
-	Button upButton;
-	Button downButton;
+	private Button upButton;
+	private Button downButton;
+	private Button allTheWayButton;
 	
 	TextArea area;
 	TextField box;
@@ -47,6 +48,8 @@ public class MyChat
 	private Graphics g;
 	
 	private ChatLine[] chatLines;
+
+	
 	
     public MyChat(final Player player, Graphics g) throws SlickException
 	{
@@ -211,7 +214,7 @@ public class MyChat
         box.addActionListener(textAction);
         
         upButton = new Button("^");
-        upButton.setLocation(area.getWidth()+10, area.getAbsoluteY());
+        upButton.setLocation(area.getWidth()+12, area.getAbsoluteY());
         
         ActionListener upButList = new ActionListener() {
             public void actionPerformed(ActionEvent ev) 
@@ -224,7 +227,7 @@ public class MyChat
         upButton.addActionListener(upButList);
          
         downButton = new Button("V");
-        downButton.setLocation(area.getWidth()+10, area.getAbsoluteY()+area.getHeight()-downButton.getHeight());
+        downButton.setLocation(area.getWidth()+12, area.getAbsoluteY()+area.getHeight()-downButton.getHeight());
         
         ActionListener dwonButList = new ActionListener() {
             public void actionPerformed(ActionEvent ev) 
@@ -236,11 +239,24 @@ public class MyChat
         
         downButton.addActionListener(dwonButList);
     	
+        allTheWayButton = new Button("|");
+        allTheWayButton.setLocation(area.getWidth()+15, area.getAbsoluteY()+area.getHeight()+downButton.getHeight()+10-allTheWayButton.getHeight());
+        
+        ActionListener allWayButList = new ActionListener() {
+            public void actionPerformed(ActionEvent ev) 
+            {    
+            	index = all_text.size(); 
+            }
+         };
+        
+         allTheWayButton.addActionListener(allWayButList);
+        
     	display.add(see_label);
         display.add(area);
         display.add(box);
         display.add(upButton);
         display.add(downButton);
+        display.add(allTheWayButton);
 	}
 	
 	public void update(int delta, int mouse_wheel_moved)
@@ -356,7 +372,7 @@ public class MyChat
 				int len_name = Math.min(g.getFont().getWidth(said), 600);
 			    len_name = (Map.SIZE_OF_TILE - len_name)/2;
 			    
-			    g.drawString(said, 350+len_name, 175);
+			    g.drawString(said, 350+len_name, 125);
 			    g.setColor(Color.black);
 			}
 		}

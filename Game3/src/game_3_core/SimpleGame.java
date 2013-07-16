@@ -34,7 +34,7 @@ public class SimpleGame extends BasicGame
 	private Player player = null;
 	private Image bg = null;
 	
-	private creatureHandler ch;
+	private CreatureHandler ch;
 	private ItemHandler ih;
 	
 	static public GameContainer gc;
@@ -65,7 +65,7 @@ public class SimpleGame extends BasicGame
     	 // create new player
     	 player = new Player(start_player_pos , land);
     	 ih = new ItemHandler(player);
-    	 ch = new creatureHandler(player);
+    	 ch = new CreatureHandler(player);
     	 
     	 wolf = new Wolf(new Position(15, 10), land); 
     	 Wolf wolf2 = new Wolf(new Position(16, 10), land);
@@ -77,10 +77,8 @@ public class SimpleGame extends BasicGame
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player, gc.getGraphics());
 
-         // TODO shift + click to see item
-         // TODO Use coin to break , have a popup coming saying wtf, how much to break?
-         // TODO Battle text and messages displayed mid-screen for words you say.
          // TODO Once that's done, look into creating obsticles.
+    	 // TODO Use coin to break , have a popup coming saying wtf, how much to break?
          // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
     }
     
@@ -96,7 +94,7 @@ public class SimpleGame extends BasicGame
     	ch.checkActive();
     	// Move active creatuers
     	ch.move(land, delta);
-    
+    	ch.updateBattleText(delta, display);
     	//player interactions with the world:
   
     	// player input checks
@@ -111,7 +109,7 @@ public class SimpleGame extends BasicGame
         player.check_see(land, delta);
         // update methods for other components
     	player.update(land, delta);
-    	ch.checkDead(land, ih);
+    	ch.checkDead(land, ih, display);
     	
     	display.update(gc, delta);
     	chat.update(delta, mouse_wheel_moved);
@@ -133,8 +131,9 @@ public class SimpleGame extends BasicGame
    	 	if (debug)
    	 		land.drawCoordinate(player, g);
    	 	
-   	 	ch.draw(g);	// all the creatures that are next to the player get drawn
+   	 		
 		ih.draw(g);
+		ch.draw(g);
 		
    	 	if (player.getMoving() != 5 && !(player.getPos().equals(player.getOldPos())))
    	 		player.drawMoving();
@@ -142,14 +141,14 @@ public class SimpleGame extends BasicGame
    	 		player.draw();
    	 	
    	 	player.contH.draw();
-   	 	player.draw_drag_item();
    	 	
    	 	display.render(gc, g);
+   	 	
+   	 	player.draw_drag_item();
+   	 	
    	 	chat.drawSeeMessage();
    	 	chat.drawSaid();
     }
-  
-    // TODO all the way down button?
     
 
     public static void main(String[] args) throws SlickException

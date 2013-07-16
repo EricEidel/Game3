@@ -2,7 +2,6 @@ package creatures;
 
 import game_3_core.Position;
 import game_3_core.SimpleGame;
-import items.Container;
 import items.Item;
 
 import java.util.Random;
@@ -12,9 +11,9 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
+import sui.Label;
 import tiles.Tile;
 import GUI.Map;
-import GUI.MyChat;
 import GUI.Status;
 import abilities.Spell;
 
@@ -94,6 +93,12 @@ public abstract class Creature
     private Item deadItem;
 
 	private String see;
+	
+	private Label damageTaken;
+	private Label healTaken;
+	
+	private int deltaDamage;
+	public static final int show_damage_time = 1200;
 
 	public Creature(Position pos, Map world)
 	{
@@ -114,6 +119,12 @@ public abstract class Creature
 		
 		setActive(false);
 		setDead(false);
+		
+		damageTaken = new Label("");
+		damageTaken.setForeground(Color.red);
+		
+		healTaken = new Label("");
+		healTaken.setForeground(Color.green);
 	}
 	
 	public void move(Map world) 
@@ -201,7 +212,7 @@ public abstract class Creature
 	}
 
 	/// ==================== DRAW METHODS =============
-	
+		
 	// This method draws when BOTH player and C are moving
 	public void drawMoving(Player player, int x_tile_dist,  int y_tile_dist ,Graphics g)
 	{
@@ -477,6 +488,22 @@ public abstract class Creature
 
 	public void takeDamage(int dmg)
 	{
+		// battle text points
+		damageTaken.setText("-"+Integer.toString(dmg));
+		damageTaken.pack();
+		deltaDamage = show_damage_time;
+		
+		int x = getPos().getX() - targeted.getPos().getX();
+		int y = getPos().getY() - targeted.getPos().getY();
+		
+		int center_x = 7*50 + 10;
+		int center_y = 5*50 + 10;
+		x = center_x + x*50+30;
+		y = center_y + y*50+10;
+		
+		damageTaken.setLocation(x,y);
+		
+		
 		this.hp-=dmg;
 		if (this.hp<1)
 		{
@@ -485,6 +512,21 @@ public abstract class Creature
 		}
 	}
 	
+	public void animateBT()
+	{
+		float x = damageTaken.getAbsoluteX();
+		float y = damageTaken.getAbsoluteY();
+		damageTaken.setLocation(x,y-deltaDamage/500);
+	}
+	
+	public Label getDamageTaken() {
+		return damageTaken;
+	}
+
+	public void setDamageTaken(Label damageTaken) {
+		this.damageTaken = damageTaken;
+	}
+
 	public void setHp(int hp) 
 	{
 		this.hp = hp;
@@ -737,4 +779,13 @@ public abstract class Creature
 		this.deadItem = deadItem;
 	}
 
+	public int getDeltaDamage() 
+	{
+		return this.deltaDamage;
+	}
+	
+	public void setDeltaDamage( int deltaDamage) 
+	{
+		this.deltaDamage = deltaDamage;
+	}
 }

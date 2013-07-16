@@ -51,7 +51,7 @@ public class Player extends Creature
 		gc = SimpleGame.getGC();
 		chat = SimpleGame.chat;
 		setSpeed(600); // How often a player moves a tile - miliseconds
-		setAttackSpeed(1000);
+		setAttackSpeed(1200);
 		
 		setInputDelta(0); 
 		setAttackDelta(0);
@@ -284,6 +284,7 @@ public class Player extends Creature
 		    		{
 		    			attacked.toogleAttacked();
 		    			setTarget(attacked);
+		    			getTarget().setTargeted(this);
 		    		}
 			    			
 	    		}
@@ -629,7 +630,8 @@ public class Player extends Creature
 			{
 				actual_held = getItemFromWorld(input.getAbsoluteMouseX(), input.getAbsoluteMouseY(), world);
 				if (actual_held != null)
-					source_world_pos = actual_held.getPos();
+					if (actual_held.getPos().near(getPos(), 1))
+						source_world_pos = actual_held.getPos();
 			}
 			else if (isOnInv(input.getAbsoluteMouseX(), input.getAbsoluteMouseY()))
 			{
@@ -865,19 +867,27 @@ public class Player extends Creature
 		// world to world
 		if (source_world_pos != null)
 		{
-			Position pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
+			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
     		
-			// Only move n
-			if (!source_world_pos.equals(pos))
+			// Only move if actually dif pos.
+			if (!source_world_pos.equals(target_pos))
 			{
-				// set the item at the new position and remove it from the old position in the world
-	    		boolean check = world.tileAt(pos).setItem(actual_held, ih);
+				// remove from old position and ih.
+				ih.remove_item(actual_held);
+				world.tileAt(source_world_pos).removeItem(actual_held);
+				
+				// try to set the item at the new position
+	    		boolean check = world.tileAt(target_pos).setItem(actual_held, ih);
 	    		if (check)
-	    		{
-	    			world.tileAt(actual_held.getPos()).removeItem(actual_held);
-	    			
-	    			// update item position
-	    			actual_held.setPos(pos);
+	    		{   //Successful moved - update pos and ih.
+	    			actual_held.setPos(target_pos);
+	    			ih.add_item(actual_held);
+	    			actual_held = null;
+	    		}
+	    		else
+	    		{	// Can't move - put back on old tile and update ih
+	    			world.tileAt(source_world_pos).setItem(actual_held, ih);
+	    			ih.add_item(actual_held);
 	    			actual_held = null;
 	    		}
 			}

@@ -149,5 +149,4 @@ public class Position
 		
 		return Player.no_move;
 	}
-	
 }
