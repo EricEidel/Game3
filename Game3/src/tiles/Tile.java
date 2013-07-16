@@ -40,7 +40,8 @@ public class Tile
 	private String see;
 	private boolean canPutItem;
 	
-	public Tile (int type, Position pos)
+	public Tile (int type, Position pos) // TODO add support for new tile sets, change one tile class to multiply classes that are built from a static factory.
+										 // TODO ADD a bulp effect and change "setItem" method appropriatly so that water (and lava and so on) destroy items thrown on them.
 	{
 		this.canPutItem = true;
 		this.type = type;
