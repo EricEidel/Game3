@@ -79,6 +79,8 @@ public class ContainerHandler
 			{
 				conts.get(i).drawCont(i);
 				count++;
+				if (conts.size() > LIMIT)
+					conts.get(LIMIT-1).close();
 			}
 		}
 	}

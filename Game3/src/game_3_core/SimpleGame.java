@@ -77,6 +77,7 @@ public class SimpleGame extends BasicGame
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player, gc.getGraphics());
 
+    	 // TODO Tile adjustments.
          // TODO Once that's done, look into creating obsticles.
     	 // TODO Use coin to break , have a popup coming saying wtf, how much to break?
          // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
