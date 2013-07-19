@@ -13,6 +13,7 @@ public class Tile
 {
 	static public final int GREEN = 1;
 	static public final int WATER = 2;
+	static public final int SHORE = 3;
 	
 	static public final int SHORE_LEFT = 3;
 	static public final int SHORE_UP_LEFT = 4;
@@ -27,8 +28,6 @@ public class Tile
 	static public final int SHORE_UP_RIGHT_INV = 12;
 	static public final int SHORE_DOWN_RIGHT_INV = 13;
 	static public final int SHORE_DOWN_LEFT_INV = 14;
-
-	
 	
 	private Creature c = null;
 	private ArrayList<Item> items = null;
@@ -40,29 +39,30 @@ public class Tile
 	private String see;
 	private boolean canPutItem;
 	
-	public Tile (int type, Position pos) // TODO add support for new tile sets, change one tile class to multiply classes that are built from a static factory.
-										 // TODO ADD a bulp effect and change "setItem" method appropriatly so that water (and lava and so on) destroy items thrown on them.
+	private boolean playDestroyItem;
+	
+	public Tile (Position pos)
 	{
-		this.canPutItem = true;
-		this.type = type;
-		this.pos = pos;
 		items = new ArrayList<Item>();
+		this.pos = pos;		
+	}
+	
+	// static factory method
+	static public Tile makeNewTile(int type, Position pos)
+	{
 		switch (type)
 		{
 			case GREEN: 
-				this.movable = true;
-				setSee("You see grass.");
-				break;
+				return new GreenTile(pos);
+				
+			case SHORE:
+				return new ShoreTile(pos);
 				
 			default:
-				this.movable = false;
-				setSee("You see water.");
-				break;
+				return new WaterTile(pos);
 		}
 
-		
 	}
-	
 	
 	public ArrayList<Item> getItems() {
 		return items;
@@ -172,6 +172,14 @@ public class Tile
 	}
 
 
+	public boolean isCanPutItem() {
+		return canPutItem;
+	}
+
+	public void setCanPutItem(boolean canPutItem) {
+		this.canPutItem = canPutItem;
+	}
+
 	public String getSee() {
 		return see;
 	}
@@ -185,6 +193,14 @@ public class Tile
 	public void removeItem(Item held) 
 	{
 		items.remove(held);
+	}
+
+	public boolean isPlayDestroyItem() {
+		return playDestroyItem;
+	}
+
+	public void setPlayDestroyItem(boolean playDestroyItem) {
+		this.playDestroyItem = playDestroyItem;
 	}
 }
 

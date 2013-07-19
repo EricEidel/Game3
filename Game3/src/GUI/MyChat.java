@@ -110,43 +110,12 @@ public class MyChat
                 deltaEnter = 0;
             }
             
-            /*
-            
-            // adds the formated text to all_text after breaking it into chat lines. Returns the text broken with \n when it's too much to display.
-			private String add_text_and_format(String format_text) 
-			{
-				int index_str = 0;
-				String show_to_screen = "";
-                String new_str = "";
-                System.out.println(format_text.length());
-                while (index_str < format_text.length())
-                {
-	                while (SimpleGame.getGC().getGraphics().getFont().getWidth(new_str) < area.getWidth()-140 && index_str < format_text.length())
-	                {
-	                	new_str += format_text.charAt(index_str);
-	                	index_str ++;
-	                }
-	                all_text.add(new_str);
-	                index++;
-	                show_to_screen += new_str+"\n";
-	                new_str="";
-                }
-
-                return show_to_screen;
-			}
-         };
-            
-             */
             
 			// adds the formated text to all_text after breaking it into chat lines. Returns the text broken with \n when it's too much to display.
 			private String add_text_and_format(String format_text) 
 			{
 				String[] all_strings = format_text.split(" ");
-				for (String s: all_strings)
-				{
-					System.out.print(s);
-				}
-				System.out.println();
+			
 				all_strings = make_sure_no_long_strings(all_strings);
 
 				int index_str = 0;
@@ -219,8 +188,11 @@ public class MyChat
         ActionListener upButList = new ActionListener() {
             public void actionPerformed(ActionEvent ev) 
             {    
-            	index--;
-                index = Math.max(MAX_LINES, index); 
+            	if (all_text.size()>MAX_LINES)
+            	{
+	            	index--;
+	                index = Math.max(MAX_LINES, index); 
+            	}
             }
          };
         

@@ -15,6 +15,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 
+import tiles.DestroyItemTile;
 import tiles.Tile;
 import GUI.HUD;
 import GUI.Map;
@@ -902,7 +903,17 @@ public class Player extends Creature
 			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
 			
 			// try to add item to world
-    		boolean check = world.tileAt(target_pos).setItem(actual_held, ih);
+			boolean check;
+			Tile temp = world.tileAt(target_pos);
+			if (temp instanceof DestroyItemTile)
+			{
+				temp.setItem(actual_held, ih);
+				remove_from_inv(source_inv);
+				
+				check = false;
+			}
+			else
+				check = temp.setItem(actual_held, ih);
     		
     		// if successful, update item location and ih and remove from inv.
     		if (check)

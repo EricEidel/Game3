@@ -114,6 +114,9 @@ public class SimpleGame extends BasicGame
     	
     	display.update(gc, delta);
     	chat.update(delta, mouse_wheel_moved);
+    	
+    	// update timer for destroying items by some tiles
+    	land.updateDestoryItem(gc, delta);
     }
 
     public void mouseWheelMoved(int moved)
@@ -132,7 +135,8 @@ public class SimpleGame extends BasicGame
    	 	if (debug)
    	 		land.drawCoordinate(player, g);
    	 	
-   	 		
+   	 	land.drawDestroyItem();
+   	 	
 		ih.draw(g);
 		ch.draw(g);
 		

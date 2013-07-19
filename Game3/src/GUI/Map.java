@@ -9,9 +9,11 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
+import tiles.DestroyItemTile;
 import tiles.Tile;
 import creatures.Creature;
 import creatures.Player;
@@ -73,27 +75,27 @@ public class Map
 		// This makes ALL green
 	   	 for (int i = 0; i < hieght ; i++)
 			 for ( int j = 0; j < length ; j++)
-				land[i][j] = new Tile(Tile.GREEN, new Position(j,i));		
+				land[i][j] = Tile.makeNewTile(Tile.GREEN, new Position(j,i));		
 			
 	   	 // This does the first 7 columns
 	   	 for (int i = 0; i < hieght; i++)	
 	   		 for ( int j = 0; j < X_LIMIT ; j++)
-	   			 land[i][j] = new Tile(Tile.WATER, new Position(j,i));
+	   			 land[i][j] = Tile.makeNewTile(Tile.WATER, new Position(j,i));
 	   	 
 	   	 // This does the last 7 columns
 	   	 for (int i = 0; i < hieght; i++)	
 	   		 for ( int j = length - X_LIMIT; j < length ; j++)
-	   			 land[i][j] = new Tile(Tile.WATER, new Position(j,i));
+	   			 land[i][j] = Tile.makeNewTile(Tile.WATER, new Position(j,i));
 	   	 
 	   	 // This does the first 7 rows   	 
 	   	 for (int i = 0; i < Y_LIMIT; i++)							
 			 for ( int j = 0; j < length ; j++)
-				land[i][j] = new Tile(Tile.WATER, new Position(j,i));	
+				land[i][j] = Tile.makeNewTile(Tile.WATER, new Position(j,i));
 
 	   	 // This does the last 7 rows   	 
 	   	 for (int i = hieght - Y_LIMIT; i < hieght; i++)							
 			 for ( int j = 0; j < length ; j++)
-				land[i][j] = new Tile(Tile.WATER, new Position(j,i));
+				land[i][j] = Tile.makeNewTile(Tile.WATER, new Position(j,i));
 	   	 
 	   	 save_to_txt("test_new.txt");
 	   	 return land;
@@ -162,7 +164,7 @@ public class Map
 				
 				for (int i=0; i<one_line.length-1; i++)
 				{
-					land[column][i] = new Tile(Integer.parseInt(one_line[i]), new Position(i, column));
+					land[column][i] = Tile.makeNewTile(Integer.parseInt(one_line[i]), new Position(i, column));
 				}
 				column++;
 				line = br.readLine();
@@ -300,5 +302,33 @@ public class Map
 			land[pos.getY()][pos.getX()].setItem(temp, ih);
 			ih.add_item(temp);
 		}
+	}
+	
+	public void updateDestoryItem(GameContainer c, int delta)
+	{
+		for (Tile[] tRow: land)
+			for  (Tile t: tRow)
+			{
+				if (t != null)
+					if (t.isPlayDestroyItem())
+					{
+						DestroyItemTile tDestroy = (DestroyItemTile)t;
+						tDestroy.update(c, delta);
+					}
+			}
+	}
+	
+	public void drawDestroyItem()
+	{
+		for (Tile[] tRow: land)
+			for  (Tile t: tRow)
+			{
+				if (t != null)
+					if (t.isPlayDestroyItem())
+					{
+						DestroyItemTile tDestroy = (DestroyItemTile)t;
+						tDestroy.PlayDestroyAnim(t.getPos());
+					}
+			}
 	}
 }
