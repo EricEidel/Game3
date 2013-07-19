@@ -408,8 +408,8 @@ public class Player extends Creature
     
 	private boolean isOnWorld(int mouse_x, int mouse_y) 
 	{
-		if ((mouse_x >= Map.X_OFFSET) && (mouse_x <= Map.X_LEN_TOTAL))
-			if ((mouse_y >= Map.Y_OFFSET) && (mouse_y <= Map.Y_LEN_TOTAL))
+		if ((mouse_x > Map.X_OFFSET) && (mouse_x < Map.X_LEN_TOTAL))
+			if ((mouse_y > Map.Y_OFFSET) && (mouse_y < Map.Y_LEN_TOTAL))
 				return true;
 		
 		return false;
@@ -419,8 +419,8 @@ public class Player extends Creature
     {
     	// formula for absolute world position from relative map click:
     	// absolute click x = (player x) - (map.center x) + (relative click x) 
-    	int x = getPos().getX() - 7 + mouse_x/Map.SIZE_OF_TILE;
-    	int y = getPos().getY() - 5 + mouse_y/Map.SIZE_OF_TILE;
+    	int x = getPos().getX() - 7 + (mouse_x-Map.X_OFFSET)/Map.SIZE_OF_TILE;
+    	int y = getPos().getY() - 5 + (mouse_y-Map.Y_OFFSET)/Map.SIZE_OF_TILE;
 		return new Position(x,y);
 	}
 
@@ -878,19 +878,36 @@ public class Player extends Creature
 				world.tileAt(source_world_pos).removeItem(actual_held);
 				
 				// try to set the item at the new position
-	    		boolean check = world.tileAt(target_pos).setItem(actual_held, ih);
-	    		if (check)
-	    		{   //Successful moved - update pos and ih.
-	    			actual_held.setPos(target_pos);
-	    			ih.add_item(actual_held);
-	    			actual_held = null;
-	    		}
-	    		else
-	    		{	// Can't move - put back on old tile and update ih
-	    			world.tileAt(source_world_pos).setItem(actual_held, ih);
-	    			ih.add_item(actual_held);
-	    			actual_held = null;
-	    		}
+				// try to add item to world
+				boolean check;
+				boolean destroyed = false;
+				Tile temp = world.tileAt(target_pos);
+				if (temp instanceof DestroyItemTile)
+				{
+					temp.setItem(actual_held, ih);
+					remove_from_inv(source_inv);
+					destroyed = true;
+					check = false;
+					actual_held = null;
+				}
+				else
+					check = temp.setItem(actual_held, ih);
+				
+				if (!destroyed)
+				{
+		    		if (check)
+		    		{   //Successful moved - update pos and ih.
+		    			actual_held.setPos(target_pos);
+		    			ih.add_item(actual_held);
+		    			actual_held = null;
+		    		}
+		    		else
+		    		{	// Can't move - put back on old tile and update ih
+		    			world.tileAt(source_world_pos).setItem(actual_held, ih);
+		    			ih.add_item(actual_held);
+		    			actual_held = null;
+		    		}
+				}
 			}
 			else
 				actual_held = null;
@@ -926,17 +943,33 @@ public class Player extends Creature
     		actual_held = null;
 		}
 
-		// if was from cont
+		// cont to world
 		else if ((source_cont!=-1)&& (source_item_slot!=-1))
 		{
 			// put item to the world
 			Position target_pos = getPos(input.getAbsoluteMouseX(), input.getAbsoluteMouseY());
-    		world.tileAt(target_pos).setItem(actual_held, ih);
-    		ih.add_item(actual_held);
-    		actual_held.setPos(target_pos);
-    		
-    		// remove it from the container
-    		contH.removeItem(cont_num, item_slot);
+			
+			boolean check;
+			Tile temp = world.tileAt(target_pos);
+			if (temp instanceof DestroyItemTile)
+			{
+				temp.setItem(actual_held, ih);
+				contH.removeItem(cont_num, item_slot);
+				
+				check = false;
+			}
+			else
+				check = temp.setItem(actual_held, ih);
+			
+			if (check)
+			{
+	    		temp.setItem(actual_held, ih);
+	    		ih.add_item(actual_held);
+	    		actual_held.setPos(target_pos);
+	    		
+	    		// remove it from the container
+	    		contH.removeItem(cont_num, item_slot);
+			}
     		
     		actual_held = null;
 		}

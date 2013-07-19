@@ -26,7 +26,7 @@ public class SimpleGame extends BasicGame
 	int mouse_wheel_moved = 0;
 	int mouse_wheel_before = 0;
     static private Display display;
-	public static boolean debug = false;
+	public static boolean debug = true;
 	// input control
 	public static Position start_player_pos = new Position(Player.X_PLAYER_START, Player.Y_PLAYER_START);
 	
@@ -77,7 +77,8 @@ public class SimpleGame extends BasicGame
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player, gc.getGraphics());
 
-    	 // TODO Tile adjustments.
+    	 // TODO Change background map to work with new tilesets
+    	 // TODO Create load creatures and load items from file? <- Need to figure out a good way to do this.
          // TODO Once that's done, look into creating obsticles.
     	 // TODO Use coin to break , have a popup coming saying wtf, how much to break?
          // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
@@ -135,7 +136,7 @@ public class SimpleGame extends BasicGame
    	 	if (debug)
    	 		land.drawCoordinate(player, g);
    	 	
-   	 	land.drawDestroyItem();
+   	 	land.drawDestroyItem(player);
    	 	
 		ih.draw(g);
 		ch.draw(g);

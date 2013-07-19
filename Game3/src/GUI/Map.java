@@ -318,7 +318,7 @@ public class Map
 			}
 	}
 	
-	public void drawDestroyItem()
+	public void drawDestroyItem(Player player)
 	{
 		for (Tile[] tRow: land)
 			for  (Tile t: tRow)
@@ -327,7 +327,7 @@ public class Map
 					if (t.isPlayDestroyItem())
 					{
 						DestroyItemTile tDestroy = (DestroyItemTile)t;
-						tDestroy.PlayDestroyAnim(t.getPos());
+						tDestroy.PlayDestroyAnim(t.getPos(), player);
 					}
 			}
 	}

@@ -9,6 +9,10 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import GUI.Map;
+
+import creatures.Player;
+
 import sui.Timer;
 
 public class WaterTile extends Tile implements DestroyItemTile
@@ -16,7 +20,7 @@ public class WaterTile extends Tile implements DestroyItemTile
 	int deltaDestroy;
 	Timer timer = new Timer(1800);
 	
-	static Animation destroyWater;
+	Animation destroyWater;
 	
 	{
 		try 
@@ -50,10 +54,16 @@ public class WaterTile extends Tile implements DestroyItemTile
 	}
 	
 	
-	public void PlayDestroyAnim(Position pos) 
+	public void PlayDestroyAnim(Position pos, Player player) 
 	{
-		System.out.println(pos.toString()); // TODO Change the pos to be the reletive pos on seeable screen, not the pos in array.
-		destroyWater.draw(pos.getX(), pos.getY());
+		System.out.println(pos.toString()); 
+		int x = getPos().getX() - player.getPos().getX();
+		int y = getPos().getY() - player.getPos().getY();
+		
+		x= Map.X_OFFSET+(Player.getPlayerXCenter() + x)*Map.SIZE_OF_TILE;
+		y= Map.Y_OFFSET+(Player.getPlayerYCenter() + y)*Map.SIZE_OF_TILE;
+		destroyWater.draw(x,y);
+
 		if (timer.getNow() >= 1180)
 		{
 			timer.restart();
