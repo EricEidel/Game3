@@ -7,9 +7,9 @@ public class ShoreTile extends Tile
 	public ShoreTile(Position pos)
 	{
 		super(pos);
-		setType(Tile.WATER);
+		setType(Tile.SHORE);
 		setCanPutItem(true);
 		setMovable(false);
-		setSee("You see water.");
+		setSee("You see some sand near the water.");
 	}
 }

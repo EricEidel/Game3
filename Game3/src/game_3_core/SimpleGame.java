@@ -26,7 +26,7 @@ public class SimpleGame extends BasicGame
 	int mouse_wheel_moved = 0;
 	int mouse_wheel_before = 0;
     static private Display display;
-	public static boolean debug = true;
+	public static boolean debug = false;
 	// input control
 	public static Position start_player_pos = new Position(Player.X_PLAYER_START, Player.Y_PLAYER_START);
 	
