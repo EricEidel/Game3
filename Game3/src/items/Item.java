@@ -62,9 +62,6 @@ public abstract class Item
 	{
 		float part = (float)player.getInputDelta() / (float)player.getSpeed() ;
 		int offset = (int) (part*Map.SIZE_OF_TILE);
-		
-		//System.out.println(part);
-		//System.out.println(offset);
 
 		int x_move =((Player.getPlayerXCenter()+x_tile_dist)*Map.SIZE_OF_TILE)+Map.X_OFFSET; 
 		int y_move =((Player.getPlayerYCenter()+y_tile_dist)*Map.SIZE_OF_TILE)+Map.Y_OFFSET;

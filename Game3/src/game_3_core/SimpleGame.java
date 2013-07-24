@@ -77,11 +77,12 @@ public class SimpleGame extends BasicGame
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player, gc.getGraphics());
 
-    	 // TODO Change background map to work with new tilesets
     	 // TODO Create load creatures and load items from file? <- Need to figure out a good way to do this.
-         // TODO Once that's done, look into creating obsticles.
+         // TODO look into creating obsticles.
     	 // TODO Use coin to break , have a popup coming saying wtf, how much to break?
          // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
+    	 // TODO Items re-appear fully when scrolling onto the screen. They also disapear right away. Doesn't look that good.
+    	 
     }
     
     @Override
@@ -129,14 +130,20 @@ public class SimpleGame extends BasicGame
     {    	 
     	bg.draw();
     	if (player.getMoving() != 5 && !(player.getPos().equals(player.getOldPos())))
+    	{
    	 		land.drawMove(player);
+   	 		land.drawMoveDestroyItem(player);
+    	}
     	else
+    	{
     		land.draw(player);
+    		land.drawDestroyItem(player);
+    	}
     		
    	 	if (debug)
    	 		land.drawCoordinate(player, g);
    	 	
-   	 	land.drawDestroyItem(player);
+   	 	
    	 	
 		ih.draw(g);
 		ch.draw(g);

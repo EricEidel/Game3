@@ -11,4 +11,7 @@ public interface DestroyItemTile
 	public void PlayDestroyAnim(Position pos, Player player);
 
 	public void update(GameContainer c, int delta);
+
+	public void PlayDestroyAnimMove(Position pos, Player player);
+
 }

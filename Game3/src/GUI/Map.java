@@ -331,4 +331,19 @@ public class Map
 					}
 			}
 	}
+
+	public void drawMoveDestroyItem(Player player) 
+	{
+		for (Tile[] tRow: land)
+			for  (Tile t: tRow)
+			{
+				if (t != null)
+					if (t.isPlayDestroyItem())
+					{
+						DestroyItemTile tDestroy = (DestroyItemTile)t;
+						tDestroy.PlayDestroyAnimMove(t.getPos(), player);
+					}
+			}
+		
+	}
 }

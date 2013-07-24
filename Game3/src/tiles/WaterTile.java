@@ -56,7 +56,6 @@ public class WaterTile extends Tile implements DestroyItemTile
 	
 	public void PlayDestroyAnim(Position pos, Player player) 
 	{
-		System.out.println(pos.toString()); 
 		int x = getPos().getX() - player.getPos().getX();
 		int y = getPos().getY() - player.getPos().getY();
 		
@@ -70,7 +69,6 @@ public class WaterTile extends Tile implements DestroyItemTile
 			setPlayDestroyItem(false);
 			destroyWater.stop();
 		}
-		System.out.println(timer.getNow());
 	}
 	
 	@Override 
@@ -86,5 +84,68 @@ public class WaterTile extends Tile implements DestroyItemTile
 	public void update(GameContainer c, int delta) 
 	{
 		timer.update(c, delta);	
+	}
+
+
+	public void PlayDestroyAnimMove(Position pos, Player player) 
+	{
+		int x = getPos().getX() - player.getPos().getX();
+		int y = getPos().getY() - player.getPos().getY();
+		
+		float part = (float)player.getInputDelta() / (float)player.getSpeed() ;
+		int offset = (int) (part*Map.SIZE_OF_TILE);
+
+		int x_move =((Player.getPlayerXCenter()+x)*Map.SIZE_OF_TILE)+Map.X_OFFSET; 
+		int y_move =((Player.getPlayerYCenter()+y)*Map.SIZE_OF_TILE)+Map.Y_OFFSET;
+		
+		int tile = Map.SIZE_OF_TILE;
+		
+		int actual_x = 0;
+		int actual_y = 0;
+		
+		switch (player.getMoving())
+		{
+			case 1:
+				actual_x = x_move-tile+offset;
+				actual_y = y_move+tile-offset;
+				break;
+			case 2:
+				actual_x = x_move;
+				actual_y = y_move+tile-offset;
+				break;
+			case 3:	
+				actual_x = x_move+tile-offset;
+				actual_y = y_move+tile-offset;
+				break;
+			case 4:
+				actual_x = x_move-tile+offset;
+				actual_y = y_move;
+				break;
+			case 6:
+				actual_x = x_move+tile-offset;
+				actual_y = y_move;
+				break;
+			case 7:
+				actual_x = x_move-tile+offset;
+				actual_y = y_move+offset-tile;
+				break;
+			case 8:			
+				actual_x = x_move;
+				actual_y = y_move+offset-tile;
+				break;
+			case 9:
+				actual_x = x_move+tile-offset;
+				actual_y = y_move+offset-tile;
+				break;
+		}
+		
+		destroyWater.draw(actual_x,actual_y);
+		
+		if (timer.getNow() >= 1180)
+		{
+			timer.restart();
+			setPlayDestroyItem(false);
+			destroyWater.stop();
+		}
 	}
 }
