@@ -1,29 +1,99 @@
 package game_3_core;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
 
 import sui.Display;
 import sui.Label;
+import tiles.Tile;
 import GUI.Map;
 import creatures.Creature;
 import creatures.Player;
 
+
+
 public class CreatureHandler 
 {
+	static final int WOLF = 1;
+	static final int RAT = 2;
+	static String seperator = ",";
+	
 	private ArrayList<Creature> creatures;
 	private Player player;
 	
 	private ArrayList<LabelTracker> dead_labels;
 	
-	public CreatureHandler(Player player)
+	public CreatureHandler(String file_name, Player player)
 	{
-		creatures = new ArrayList<Creature>();
+		
 		this.player = player;
 		dead_labels = new ArrayList<LabelTracker>();
+		creatures = new ArrayList<Creature>();
+		load_from_txt(file_name);
 	}
 	
+	private void load_from_txt(String file_name) 
+	{
+		try
+		{
+			FileReader fr = new FileReader(file_name);
+			BufferedReader br = new BufferedReader(fr);
+		
+			String line = "";
+			while (!line.contains("width"))
+			{
+				line = br.readLine();
+			}
+			int length = Integer.parseInt(line.split("=")[1]);
+			
+			while (!line.contains("height"))
+			{
+				line = br.readLine();
+			}
+			int height = Integer.parseInt(line.split("=")[1]);
+			
+			
+			while (!line.contains("data="))
+			{
+				line = br.readLine();
+			}
+			line = br.readLine();
+			while (!line.contains("data="))
+			{
+				line = br.readLine();
+			} // Get to the collision section of the map file.
+			
+			line = br.readLine();
+			int column = 0;
+			Creature temp_creature;
+			while (!line.equals(""))
+			{
+				String[] one_line = line.split(seperator);
+				
+				for (int i=0; i<one_line.length-1; i++)
+				{
+					temp_creature = (CreatureFactory.makeNewCreature(Integer.parseInt(one_line[i]), new Position(i, column), player.getLand()));
+					if (temp_creature != null)
+						creatures.add(temp_creature);
+				}
+				column++;
+				line = br.readLine();
+			}
+			
+			br.close();
+			fr.close();
+			
+		}
+		catch (Exception e)
+		{
+			System.out.println("Couldn't load Creature Handler.");
+			e.printStackTrace();
+		}
+	}
+
 	public void draw(Graphics g)
 	{	
 		for (Creature c: creatures)

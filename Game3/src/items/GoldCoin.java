@@ -80,9 +80,9 @@ public class GoldCoin extends Coin
 			setPic(three_coins.copy());
 		else if (amount == 4)	
 			setPic(four_coins.copy());
-		else if (amount >= 5 && amount < 10)
+		else if (amount >= 5 && amount <= 10)
 			setPic(five_to_ten_coins.copy());
-		else if (amount > 10 && amount < 21)
+		else if (amount > 10 && amount <= 20)
 			setPic(eleven_to_twenty_coins.copy());
 		else if (amount > 20 && amount < 100)
 			setPic(twenty_up_coins.copy());

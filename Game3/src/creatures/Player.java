@@ -46,9 +46,13 @@ public class Player extends Creature
 	MyChat chat;
 	private boolean enableKeyMovment = true;
 	
+	Map world;
+	
 	public Player(Position pos, Map world)
 	{
 		super(pos, world);
+		this.world = world;
+		
 		gc = SimpleGame.getGC();
 		chat = SimpleGame.chat;
 		setSpeed(600); // How often a player moves a tile - miliseconds
@@ -963,7 +967,6 @@ public class Player extends Creature
 			
 			if (check)
 			{
-	    		temp.setItem(actual_held, ih);
 	    		ih.add_item(actual_held);
 	    		actual_held.setPos(target_pos);
 	    		
@@ -1351,5 +1354,10 @@ public class Player extends Creature
 				}
 			}
 		}
+	}
+
+	public Map getLand() 
+	{
+		return world;
 	}
 }

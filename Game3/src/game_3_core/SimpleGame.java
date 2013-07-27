@@ -55,6 +55,7 @@ public class SimpleGame extends BasicGame
     	 gc.setTargetFrameRate(60); 
     	 gc.getInput().enableKeyRepeat();
     	 
+    	 
     	 // Background
     	 bg = new Image("Pics/Background.jpg");
     	 // create new world
@@ -62,21 +63,15 @@ public class SimpleGame extends BasicGame
     	 
     	 // create new player
     	 player = new Player(start_player_pos , land);
-    	 ih = new ItemHandler(player);
-    	 ch = new CreatureHandler(player);
-    	 
-    	 wolf = new Wolf(new Position(15, 10), land); 
-    	 Rat wolf2 = new Rat(new Position(16, 10), land);
-    	 ch.add_creature(wolf);
-    	 ch.add_creature(wolf2);
+    	 ih = new ItemHandler("Maps/map2.txt", player);
+    	 ch = new CreatureHandler("Maps/map2.txt", player);
     	
     	 //Position pos_item = new Position(15,10);
     	 //sword = new Sword(pos_item);
     	 //ih.add_item(sword); 
     	 chat = new MyChat(player, gc.getGraphics());
 
-    	 // TODO Create load creatures and load items from file? <- Need to figure out a good way to do this.
-         // TODO look into creating obsticles.
+    	 // TODO create an "over-ride" file to change quantities of stackables on load and content of containers on load for IH onload.
     	 // TODO Use coin to break , have a popup coming saying wtf, how much to break?
          // TODO when attack command comes, if no creature at that spot, scan nearby squares for cretures that WERE on that spot. 
     	 // TODO Items re-appear fully when scrolling onto the screen. They also disapear right away. Doesn't look that good.
