@@ -317,7 +317,7 @@ public class MyChat
 		{
 			if (msg!=null)
 			{
-				g.setColor(Color.green);
+				g.setColor(Color.white);
 				int len_name = g.getFont().getWidth(msg);
 			    len_name = (Map.SIZE_OF_TILE - len_name)/2;
 			    g.drawString(msg, 350+len_name, 100);

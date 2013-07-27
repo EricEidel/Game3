@@ -53,11 +53,11 @@ public class Map
 		load_from_txt(name);
 		try
 		{
-			land_pic =  new Image("Maps/map2.jpg");
+			land_pic =  new Image("Maps/map2.png");
 		}
 		catch (Exception e)
 		{
-			System.out.println("Could not load map2.jpg!");
+			System.out.println("Could not load map2.png!");
 		}
 	}
 	

@@ -7,18 +7,16 @@ import java.util.Random;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
 import sui.Display;
-import sui.Label;
-import sui.Popup;
 import GUI.Map;
 import GUI.MyChat;
 import creatures.Player;
+import creatures.Rat;
 import creatures.Wolf;
   
 public class SimpleGame extends BasicGame
@@ -68,7 +66,7 @@ public class SimpleGame extends BasicGame
     	 ch = new CreatureHandler(player);
     	 
     	 wolf = new Wolf(new Position(15, 10), land); 
-    	 Wolf wolf2 = new Wolf(new Position(16, 10), land);
+    	 Rat wolf2 = new Rat(new Position(16, 10), land);
     	 ch.add_creature(wolf);
     	 ch.add_creature(wolf2);
     	
